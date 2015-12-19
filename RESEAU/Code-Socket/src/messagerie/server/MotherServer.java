@@ -15,7 +15,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class MotherServer implements MessagerieInterface {
     private CopyOnWriteArrayList<SocketThread> ChildServers = new CopyOnWriteArrayList<SocketThread>();
     private CopyOnWriteArrayList<Thread> ChildThreads = new CopyOnWriteArrayList<Thread>();
+    private CopyOnWriteArrayList<Message> MessageHistory = new CopyOnWriteArrayList<Message>();
 
+    private CopyOnWriteArrayList<String> UserList = new CopyOnWriteArrayList<String>();
     private int port = 4444;
     ServerSocket ListenSocket = null;
 
@@ -33,6 +35,8 @@ public class MotherServer implements MessagerieInterface {
                 ChildServers.add(newChild);
                 ChildThreads.add(threadChild);
                 threadChild.start();
+
+                SendHistory(newChild);
             }
         }
         catch (Exception e)
@@ -48,11 +52,19 @@ public class MotherServer implements MessagerieInterface {
         }
     }
 
-    public void BroadcastMessage(String msg)
+    public void BroadcastMessage(Message msg)
     {
         for (SocketThread m : ChildServers )
         {
             m.SendMessage(msg);
+        }
+    }
+
+    public void SendHistory(SocketThread child)
+    {
+        for (Message m : MessageHistory)
+        {
+            child.SendMessage(m);
         }
     }
 
@@ -90,7 +102,31 @@ public class MotherServer implements MessagerieInterface {
     }
 
     @Override
-    public void RecevoirMessage(String msg) {
-        BroadcastMessage(msg);
+    public void RecevoirMessage(SocketThread instance, Message msg) {
+        if (msg.message != null)
+        {
+            MessageHistory.add(msg);
+            BroadcastMessage(msg);
+        }
+        else if(instance != null)
+        {
+            UserList.add(msg.user);
+            instance.Name = msg.user;
+            System.err.println("User :" + msg.user + " is connected");
+            Message connexionMessage = new Message("Server","User :" + msg.user + " is connected");
+            RecevoirMessage(null, connexionMessage);
+        }
+
+    }
+
+    @Override
+    public void Disconnect(SocketThread instance, Thread thread) {
+        UserList.remove(instance.Name);
+        Message connexionMessage = new Message("Server","User :" + instance.Name + " is disconnected");
+        System.err.println(connexionMessage);
+        RecevoirMessage(null, connexionMessage);
+
+        ChildServers.remove(instance);
+        ChildThreads.remove(thread);
     }
 }

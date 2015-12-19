@@ -1,10 +1,8 @@
 package messagerie.threads;
 
-import messagerie.server.MotherServer;
+import messagerie.protocol.Message;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
+import java.io.*;
 import java.net.Socket;
 
 /**
@@ -12,17 +10,23 @@ import java.net.Socket;
  */
 public class SocketThread implements Runnable {
     MessagerieInterface Mother = null;
-
-    BufferedReader InputBuffer = null;
+    public String Name = null;
+    ObjectInputStream InStream = null;
 
     Socket ClientSocket = null;
-    PrintStream OutStream = null;
+    ObjectOutputStream OutStream = null;
+
+    Boolean Connected = false;
 
     public SocketThread(MessagerieInterface mother, Socket cs) throws java.io.IOException{
         Mother = mother;
         ClientSocket = cs;
-        InputBuffer = new BufferedReader(new InputStreamReader(ClientSocket.getInputStream()));
-        OutStream = new PrintStream(ClientSocket.getOutputStream());
+        OutStream = new ObjectOutputStream(ClientSocket.getOutputStream());
+        Message dummymessage = new Message(null,null);
+        OutStream.writeObject(dummymessage);
+        InStream = new ObjectInputStream(ClientSocket.getInputStream());
+        Connected = true;
+
     }
 
     @Override
@@ -40,27 +44,41 @@ public class SocketThread implements Runnable {
 
     public void waitForMessages()
     {
-        while (true)
+        while (Connected)
         {
             try{
-                String line = InputBuffer.readLine();
+                Message line = (Message) InStream.readObject();
                 if (line == null)
                 {
                     break;
                 }
-                Mother.RecevoirMessage(line);
+                if (line.user != null)
+                {
+                    Mother.RecevoirMessage(this, line);
+                }
             }
             catch (Exception e)
             {
-                System.err.println("Error, my client is dead !");
+                System.err.println("Error, the distant socket client is dead !");
+                //e.printStackTrace();
+                Connected = false;
+                Mother.Disconnect(this,Thread.currentThread());
                 break;
             }
         }
     }
 
-    public synchronized void SendMessage(String msg)
+    public synchronized void SendMessage(Message msg)
     {
-        OutStream.println(msg);
+        try {
+            if (Connected)
+            {
+                OutStream.writeObject(msg);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

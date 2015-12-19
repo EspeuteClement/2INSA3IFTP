@@ -10,6 +10,11 @@ public class Message implements Serializable{
     public String user;
     public String message;
 
+    public Message ()
+    {
+
+    }
+
     public Message (String u, String m)
     {
         user = u;
