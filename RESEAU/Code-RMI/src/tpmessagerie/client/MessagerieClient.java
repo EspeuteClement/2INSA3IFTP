@@ -8,9 +8,11 @@ import tpmessagerie.protocol.Message;
 import tpmessagerie.protocol.MessagerieClientITF;
 
 public class MessagerieClient implements MessagerieClientITF {
-	
-	public MessagerieClient()
+
+	Client leClient;
+	public MessagerieClient(Client c)
 	{
+		leClient = c;
 		listeMessages = new ArrayList<Message>(0);
 	}
 	
@@ -18,7 +20,7 @@ public class MessagerieClient implements MessagerieClientITF {
 	@Override
 	public void envoyerMsgClient(Message leMessage) throws RemoteException {
 		listeMessages.add(leMessage);
-		System.out.println(leMessage.utilisateur + " : " + leMessage.contenu);
+
 	}
 	
 	ArrayList<Message> listeMessages;

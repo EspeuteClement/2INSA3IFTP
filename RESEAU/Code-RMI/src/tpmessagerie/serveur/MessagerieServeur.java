@@ -27,7 +27,8 @@ public class MessagerieServeur implements MessagerieServeurITF {
 			catch (RemoteException e)
 			{
 				System.err.println("Un message n'a pas pu être envoyé au client");
-				e.printStackTrace();
+				listeClients.remove(client);
+				//e.printStackTrace();
 			}
 			
 		}
