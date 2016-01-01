@@ -22,7 +22,7 @@ public class SocketThread implements Runnable {
         Mother = mother;
         ClientSocket = cs;
         OutStream = new ObjectOutputStream(ClientSocket.getOutputStream());
-        Message dummymessage = new Message(null,null);
+        Message dummymessage = new Message(null,null, -2);
         OutStream.writeObject(dummymessage);
         InStream = new ObjectInputStream(ClientSocket.getInputStream());
         Connected = true;
@@ -52,7 +52,7 @@ public class SocketThread implements Runnable {
                 {
                     break;
                 }
-                if (line.user != null)
+                if (true)
                 {
                     Mother.RecevoirMessage(this, line);
                 }
@@ -60,7 +60,7 @@ public class SocketThread implements Runnable {
             catch (Exception e)
             {
                 System.err.println("Error, the distant socket client is dead !");
-                //e.printStackTrace();
+                e.printStackTrace();
                 Connected = false;
                 Mother.Disconnect(this,Thread.currentThread());
                 break;
@@ -74,6 +74,7 @@ public class SocketThread implements Runnable {
             if (Connected)
             {
                 OutStream.writeObject(msg);
+                System.err.println("  SocketThread : Sent message " + msg.toString());
             }
 
         } catch (IOException e) {

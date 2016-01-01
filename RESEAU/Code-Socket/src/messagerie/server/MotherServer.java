@@ -7,7 +7,10 @@ import messagerie.threads.SocketThread;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.SynchronousQueue;
 
 /**
  * Created by element on 18/12/15.
@@ -17,8 +20,11 @@ public class MotherServer implements MessagerieInterface {
     private CopyOnWriteArrayList<Thread> ChildThreads = new CopyOnWriteArrayList<Thread>();
     private CopyOnWriteArrayList<Message> MessageHistory = new CopyOnWriteArrayList<Message>();
 
-    private CopyOnWriteArrayList<String> UserList = new CopyOnWriteArrayList<String>();
+    private ConcurrentHashMap<Integer,String> UserList = new ConcurrentHashMap<Integer,String>();
     private int port = 4444;
+
+    private int userIDCount = 0;
+
     ServerSocket ListenSocket = null;
 
     public synchronized void CreateNewChild()
@@ -103,18 +109,58 @@ public class MotherServer implements MessagerieInterface {
 
     @Override
     public void RecevoirMessage(SocketThread instance, Message msg) {
+        // Si il y a un contenu dans le message
         if (msg.message != null)
         {
-            MessageHistory.add(msg);
-            BroadcastMessage(msg);
+
+            // Check if the message is a command :
+            if (msg.message.charAt(0) == '/')
+            {
+                String[] splits = msg.message.split("\\s+");
+                try{
+                    if (splits[0].equals("/nick"))
+                    {
+                        String oldName = UserList.get(msg.ID);
+                        UserList.put(msg.ID,splits[1]);
+                        instance.Name =  splits[1];
+                        RecevoirMessage(instance, new Message("Sever","User " + oldName + " is now know as " + splits[1],-1));
+                    }
+                }
+                catch (ArrayIndexOutOfBoundsException e)
+                {
+                    System.err.println("Not enough parameters");
+                    instance.SendMessage(new Message("Server","Not enough parameters",-1));
+                }
+            }
+
+            // Envoyer le message à tout le monde
+            else {
+                if (msg.user == null)
+                {
+                    msg.user = UserList.get(msg.ID);
+                }
+                MessageHistory.add(msg);
+                BroadcastMessage(msg);
+            }
         }
+
         else if(instance != null)
         {
-            UserList.add(msg.user);
-            instance.Name = msg.user;
-            System.err.println("User :" + msg.user + " is connected");
-            Message connexionMessage = new Message("Server","User :" + msg.user + " is connected");
-            RecevoirMessage(null, connexionMessage);
+            // Si le message est vide, c'est une requette d'ID de la part du client. On lui fournit sa nouvelle ID
+            if (msg.user == null && msg.ID == -1)
+            {
+                instance.SendMessage(new Message(null,"/setID",userIDCount++));
+                System.err.println("New id affected");
+            }
+            else if (msg.ID != -2)
+            {
+                UserList.put(msg.ID,msg.user);
+                instance.Name = msg.user;
+                System.err.println("User " + msg.user + " is connected");
+                Message connexionMessage = new Message("Server","User " + msg.user + " is connected", -1);
+                RecevoirMessage(null, connexionMessage);
+            }
+
         }
 
     }
@@ -122,7 +168,7 @@ public class MotherServer implements MessagerieInterface {
     @Override
     public void Disconnect(SocketThread instance, Thread thread) {
         UserList.remove(instance.Name);
-        Message connexionMessage = new Message("Server","User :" + instance.Name + " is disconnected");
+        Message connexionMessage = new Message("Server","User " + instance.Name + " is disconnected", -1);
         System.err.println(connexionMessage);
         RecevoirMessage(null, connexionMessage);
 
