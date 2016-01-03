@@ -2,75 +2,64 @@ package messagerie.client;
 
 import messagerie.protocol.Message;
 import messagerie.threads.MessagerieInterface;
-import messagerie.threads.SocketThread;
+import messagerie.threads.ThreadableSocket;
 
 import java.io.IOException;
 import java.net.Socket;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-/**
+/** A Client that can exchange messages with a remote server. Need to be hosted in a interface to be useful
  * Created by element on 18/12/15.
  */
 public class MessagerieClient implements MessagerieInterface {
     Socket ServerSocket = null;
 
-    SocketThread ConnexionServeur = null;
+    ThreadableSocket ConnexionServeur = null;
     Thread ConnexionThread = null;
-    String Name = "Bob";
-    int ID = 1;
+
+
+    int ID = -1;
 
     private MessagerieInterface host;
 
-    private CopyOnWriteArrayList<Message> MessageHistory = new CopyOnWriteArrayList<Message>();
+    protected CopyOnWriteArrayList<Message> MessageHistory = new CopyOnWriteArrayList<Message>();
 
     boolean connected = true;
 
+    /**Create a MessagerieClient.
+     *
+     * @param adress The adress of the remote server
+     * @param port The port where the remote server is connected
+     * @param host The MessagerieInstance that host this MessagerieClient
+     * @throws IOException
+     */
     public MessagerieClient(String adress, int port, MessagerieInterface host) throws IOException
     {
         this.host = host;
         MessageHistory = new CopyOnWriteArrayList<Message>();
         ServerSocket = new Socket(adress,port);
-        ConnexionServeur = new SocketThread(this,ServerSocket);
+        ConnexionServeur = new ThreadableSocket(this,ServerSocket);
         ConnexionThread = new Thread(ConnexionServeur);
         ConnexionThread.start();
-        ConnexionServeur.SendMessage(new Message(null,null,-1));
+        ConnexionServeur.SendMessage(new Message(null,null,Message.USER_LOGIN_MSG));
     }
 
-    public static void main(String Args[])
-    {
-        /*try
-        {
-            MessagerieClient Client = new MessagerieClient(Args[0],Integer.parseInt(Args[1]));
-            Scanner in = new Scanner(System.in);
-            System.out.println("Entrez votre nom svp :");
-            String msg = in.nextLine();
-            Client.Name = msg;
-            Client.EnvoyerMessage(null);
 
-            while (Client.connected == true)
-            {
-                msg = in.nextLine();
-                Client.EnvoyerMessage(msg);
-            }
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }*/
-
-    }
 
     public void EnvoyerMessage(String msg) {
         ConnexionServeur.SendMessage(new Message(null,msg, ID));
     }
 
     @Override
-    public synchronized void RecevoirMessage(SocketThread instance, Message msg) {
+    public synchronized void RecevoirMessage(ThreadableSocket instance, Message msg) {
         if (msg.message != null)
         {
+            // Message d'affectation d'une ID au client par le serveur
             if (msg.message.equals("/setID"))
             {
                 this.ID = msg.ID;
+                ConnexionServeur.ID = msg.ID;
+                // Envoyer le message d'affectation du nouveau nom
                 instance.SendMessage(new Message("NewUser",null,ID));
             }
             else
@@ -84,8 +73,8 @@ public class MessagerieClient implements MessagerieInterface {
     }
 
     @Override
-    public void Disconnect(SocketThread instance, Thread thread) {
-        System.err.println("Server disconected");
+    public void Disconnect(ThreadableSocket instance, Thread thread) {
+        host.Disconnect(instance,thread);
         connected = false;
     }
 }
