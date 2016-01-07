@@ -1,6 +1,7 @@
-package messagerie.threads;
+package messagerie.protocol;
 
 import messagerie.protocol.Message;
+import messagerie.threads.ThreadableSocket;
 
 /** Interface que doivent implémenter les classes qui souhaitent communiquer avec
  * un ThreadableSocket.
@@ -8,16 +9,15 @@ import messagerie.protocol.Message;
  */
 public interface MessagerieInterface {
 
-    /** Méthode appelée lorsque le ThreadableSocket instance recoit un message.
+    /** Called when the ThreadableSocket recives a message msg.
      *
-     * @param instance L'instance qui a reçu le méssage
-     * @param msg Le méssage reçu
+     * @param instance The ThreadableSocket that received the message
+     * @param msg The received message
      */
     void RecevoirMessage(ThreadableSocket instance, Message msg);
 
-    /**
-     * Méthode appelée lorsque le ThreadableSocket distant avec qui instance communiquait s'est
-     * déconnecté.
+    /** Called when the remote Interface is disconected
+     *
      * @param instance
      * @param thread
      */

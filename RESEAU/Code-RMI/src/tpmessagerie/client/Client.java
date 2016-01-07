@@ -6,6 +6,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import tpmessagerie.protocol.Message;
 import tpmessagerie.protocol.MessagerieClientITF;
@@ -14,6 +15,9 @@ import tpmessagerie.protocol.MessagerieServeurITF;
 import javax.swing.*;
 
 public class Client implements Runnable{
+
+    ClientGuiWindow window = null;
+
     public void ConnectToServer(String host) throws Exception{
         Registry registry = LocateRegistry.getRegistry(host);
         messagerieServeur = (MessagerieServeurITF) registry.lookup("Messagerie");
@@ -29,17 +33,30 @@ public class Client implements Runnable{
         }
     }
 
-    public Client(ClientGuiWindow theGui)
+    public Client()
     {
-        Gui = theGui;
         messagerieClient = new MessagerieClient(this);
     }
 
-    ClientGuiWindow Gui;
+    public Client(ClientGuiWindow host)
+    {
+        window = host;
+        messagerieClient = new MessagerieClient(this);
+    }
+
+    public synchronized void RecevoirMessage(Message msg)
+    {
+        AfficherMessage(msg);
+    }
+
 
     public void AfficherMessage(Message message)
     {
         //SwingUtilities.invokeLater(new setChatTextEvent(Gui.getTextArea(),message.utilisateur + " : " + message.contenu));
+        if (window != null)
+        {
+            window.setChatText(message.toString());
+        }
 
         System.out.println(message.utilisateur + " : " + message.contenu);
     }
@@ -52,24 +69,18 @@ public class Client implements Runnable{
         catch( Exception e)
         {
             System.err.println("COULDN'T SEND MESSAGE");
+            e.printStackTrace();
         }
     }
 
     MessagerieClient messagerieClient;
-    public ArrayList<Message> historique;
+    public CopyOnWriteArrayList<Message> historique;
     MessagerieServeurITF messagerieServeur;
 
     public void run()
     {
         try{
             ConnectToServer(null);
-            Scanner in = new Scanner(System.in);
-            while (true)
-            {
-                String message = in.nextLine();
-                Message m = new Message("Bob",message);
-                EnvoyerMsg(m);
-            }
         }
         catch (Exception e)
         {
@@ -84,14 +95,11 @@ public class Client implements Runnable{
         String host = (args.length < 1) ? null : args[0];
         String nom = (args.length < 2) ? "Bob" : args[1];
         int idDernierMessage = 0;
-        /*Client cl = new Client();
+        Client cl = new Client();
         try {
             cl.ConnectToServer(host);
             Scanner in = new Scanner(System.in);
-            ClientGui gui = new ClientGui();
 
-            Thread Gui = new Thread(gui,"Gui");
-            Gui.start();
 
             while (true)
             {
@@ -105,7 +113,7 @@ public class Client implements Runnable{
         } catch (Exception e) {
             System.err.println("Client exception: " + e.toString());
             e.printStackTrace();
-        }*/
+        }
     }
 	
 	

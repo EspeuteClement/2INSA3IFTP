@@ -1,6 +1,7 @@
 package messagerie.threads;
 
 import messagerie.protocol.Message;
+import messagerie.protocol.MessagerieInterface;
 
 import java.io.*;
 import java.net.Socket;

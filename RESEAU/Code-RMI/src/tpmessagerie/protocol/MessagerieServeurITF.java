@@ -3,6 +3,8 @@ package tpmessagerie.protocol;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public interface MessagerieServeurITF extends Remote {
 	/** Envoie un méssage sur le serveur
@@ -24,6 +26,6 @@ public interface MessagerieServeurITF extends Remote {
      * @throws RemoteException
      */
     void supprimerClient(MessagerieClientITF leClient) throws RemoteException;
-    
-    ArrayList<Message> recupererHistorique() throws RemoteException;
+
+    CopyOnWriteArrayList<Message> recupererHistorique() throws RemoteException;
 }

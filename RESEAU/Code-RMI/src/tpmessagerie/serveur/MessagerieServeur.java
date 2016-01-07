@@ -1,8 +1,10 @@
 package tpmessagerie.serveur;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import tpmessagerie.protocol.Message;
 import tpmessagerie.protocol.MessagerieClientITF;
@@ -12,14 +14,13 @@ public class MessagerieServeur implements MessagerieServeurITF {
 	
 	public MessagerieServeur()
 	{
-		listeMessages = new ArrayList<Message>(0);
-		listeClients = new LinkedHashSet<MessagerieClientITF>(0);
+
 	}
 	
 	@Override
 	public void envoyerMsgServeur(Message leMessage) throws RemoteException {
 		listeMessages.add(leMessage);
-		for (MessagerieClientITF client : listeClients )
+		for (MessagerieClientITF client : listeClients.keySet() )
 		{
 			try{
 				client.envoyerMsgClient(leMessage);
@@ -36,14 +37,14 @@ public class MessagerieServeur implements MessagerieServeurITF {
 	}
 	
 	
-	private ArrayList<Message> listeMessages;
+	private CopyOnWriteArrayList<Message> listeMessages = new CopyOnWriteArrayList<>();
 
 
 	@Override
 	public boolean enregistrerClient(MessagerieClientITF leClient) throws RemoteException {
 		if (!listeClients.contains(leClient))
 		{
-			listeClients.add(leClient);
+			listeClients.put(leClient,0);
 			return true;
 		}
 		return false;
@@ -54,11 +55,11 @@ public class MessagerieServeur implements MessagerieServeurITF {
 		listeClients.remove(leClient);
 	}
 	
-	LinkedHashSet<MessagerieClientITF> listeClients;
+	ConcurrentHashMap<MessagerieClientITF,Integer> listeClients = new ConcurrentHashMap<>();
 
 
 	@Override
-	public ArrayList<Message> recupererHistorique() throws RemoteException {
+	public CopyOnWriteArrayList<Message> recupererHistorique() throws RemoteException {
 		return listeMessages;
 	}
 }

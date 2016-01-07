@@ -3,6 +3,10 @@ package tpmessagerie.client;
 import tpmessagerie.protocol.Message;
 
 import javax.swing.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,52 +14,41 @@ import java.awt.event.ActionListener;
 /**
  * Created by element on 13/12/15.
  */
+
 public class ClientGuiWindow extends JFrame {
-    private JPanel test;
+    private JPanel theJPanel;
     private JButton sendButton;
     private JTextField message;
     private JList userList;
+    private JTextPane textPane1;
     private JTextArea chatHistory;
 
-    public void setChatText(String text)
+    private StyledDocument MessageDisplayContent;
+
+    public synchronized void setChatText(String text)
     {
-        SwingUtilities.invokeLater(new setChatTextEvent(chatHistory,chatHistory.getText()+"\n"+text));
-        //chatHistory.setText(text);
-        //chatHistory.repaint();
-        //setVisible(true);
+        SimpleAttributeSet style = new SimpleAttributeSet();
+
+        try {
+            MessageDisplayContent.insertString(MessageDisplayContent.getLength(),"\n"+text,style);
+        } catch (BadLocationException e) {
+            e.printStackTrace();
+        }
     }
 
 
 
     Client client;
-    javax.swing.Timer t;
     Thread clientThread;
     int positionInHistory = 0;
 
     public ClientGuiWindow(){
         setSize(400,400);
         setMinimumSize(new Dimension(250,250));
-        setContentPane(test);
-        message = new JTextField();
+        setContentPane(theJPanel);
         client = new Client(this);
         clientThread = new Thread(client);
         clientThread.start();
-        t = new javax.swing.Timer(100, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                if (client != null && client.historique !=null)
-                {
-                    while(positionInHistory < client.historique.size())
-                    {
-                        chatHistory.setText(chatHistory.getText()+"\n"+client.historique.get(positionInHistory));
-                        positionInHistory++;
-                    }
-                }
-
-            }
-        });
-
-        t.start();
 
 
 
@@ -63,12 +56,13 @@ public class ClientGuiWindow extends JFrame {
                 new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent actionEvent) {
-                        String fuckYou = message.getText();
-                        client.EnvoyerMsg(new Message("Bob",fuckYou));
+                        String content = message.getText();
+                        client.EnvoyerMsg(new Message("Bob",content));
 
                     }
                 }
         );
+        MessageDisplayContent = textPane1.getStyledDocument();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
 

@@ -1,7 +1,7 @@
 package messagerie.client;
 
 import messagerie.protocol.Message;
-import messagerie.threads.MessagerieInterface;
+import messagerie.protocol.MessagerieInterface;
 import messagerie.threads.ThreadableSocket;
 
 import javax.swing.*;
@@ -28,6 +28,7 @@ public class ClientGui extends JFrame implements MessagerieInterface {
 
     private JPanel ChatFrame;
 
+    final static String BaseWindowName = "Le Chat";
 
     private MessagerieClient Client;
 
@@ -45,8 +46,8 @@ public class ClientGui extends JFrame implements MessagerieInterface {
             this.setIconImage(icon.getImage());
 
             // Set the name of the app
-            this.setName("Le Chat");
-            this.setTitle("Le Chat");
+            this.setName(BaseWindowName);
+            this.setTitle(BaseWindowName);
 
             // Set the chat-box to autoscroll
             DefaultCaret caret = (DefaultCaret)MessageDisplay.getCaret();
@@ -128,6 +129,12 @@ public class ClientGui extends JFrame implements MessagerieInterface {
                             array[i-1] = splits[i];
                         }
                         UserDisplay.setListData(array);
+                        return;
+                    }
+                    if (splits[0].equals("/UserName"))
+                    {
+                        this.setName(BaseWindowName+ " : " + splits[1]);
+                        this.setTitle(BaseWindowName + " : " + splits[1]);
                         return;
                     }
                 }

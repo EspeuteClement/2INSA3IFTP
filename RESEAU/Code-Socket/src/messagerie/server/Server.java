@@ -1,12 +1,13 @@
 package messagerie.server;
 
 import messagerie.protocol.Message;
-import messagerie.threads.MessagerieInterface;
+import messagerie.protocol.MessagerieInterface;
 import messagerie.threads.ThreadableSocket;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -37,11 +38,24 @@ public class Server implements MessagerieInterface {
                 ThreadableSocket newChild = new ThreadableSocket(this, theSocket);
                 Thread threadChild = new Thread(newChild);
 
-                ChildServers.add(newChild);
                 ChildThreads.add(threadChild);
                 threadChild.start();
 
                 SendHistory(newChild);
+                userIDCount++;
+
+                newChild.ID = userIDCount;
+                String userName = "NewUser" + userIDCount;
+
+                UserSockets.put(userIDCount,newChild);
+                UserList.put(userIDCount,userName);
+
+                System.err.println("User " + userName + " is connected");
+                Message connexionMessage = new Message("Server","User " + userName + " is connected", -1);
+                newChild.SendMessage(new Message("Server","Welcome new user. Please type '/nick your_name' to change your user name",Message.SERVER_MSG));
+                BroadcastMessage(connexionMessage);
+                SendUserList();
+
             }
         }
         catch (Exception e)
@@ -59,7 +73,7 @@ public class Server implements MessagerieInterface {
 
     public void BroadcastMessage(Message msg)
     {
-        for (ThreadableSocket m : ChildServers )
+        for (ThreadableSocket m : UserSockets.values() )
         {
             m.SendMessage(msg);
         }
@@ -104,6 +118,9 @@ public class Server implements MessagerieInterface {
 
     @Override
     public void RecevoirMessage(ThreadableSocket instance, Message msg) {
+        int ID = instance.ID;
+        msg.ID = ID;
+
         // Si il y a un contenu dans le message
         if (msg.message != null)
         {
@@ -118,8 +135,8 @@ public class Server implements MessagerieInterface {
                     {
                         if (!UserList.containsValue(splits[1]))
                         {
-                            String oldName = UserList.get(msg.ID);
-                            UserList.put(msg.ID,splits[1]);
+                            String oldName = UserList.get(ID);
+                            UserList.put(ID,splits[1]);
                             RecevoirMessage(instance, new Message("Sever","User " + oldName + " is now know as " + splits[1],-1));
                             SendUserList();
                         }
@@ -186,43 +203,14 @@ public class Server implements MessagerieInterface {
                 // Fetch the user name in the UserList
                 if (msg.user == null)
                 {
-                    msg.user = UserList.get(msg.ID);
+                    msg.user = UserList.get(ID);
                 }
                 MessageHistory.add(msg);
                 BroadcastMessage(msg);
             }
         }
 
-        else if(instance != null)
-        {
-            // If the message is empty and the ID is USER_LOGIN_MSG, then this is a client that request an ID
-            if (msg.user == null && msg.ID == Message.USER_LOGIN_MSG)
-            {
-                userIDCount++;
-                UserSockets.put(userIDCount,instance);
 
-                //We send the message with a /setID that the client will understand as an ID assignation
-                instance.SendMessage(new Message(null,"/setID",userIDCount));
-                System.err.println("New id affected");
-            }
-            // Connexion de l'utilisateur
-            else if (msg.ID > 0)
-            {
-                if (UserList.containsValue(msg.user))
-                {
-                    // Create a unique id for the user if the name already exists
-                    msg.user = msg.user + msg.ID;
-                }
-                UserList.put(msg.ID,msg.user);
-                instance.ID = msg.ID;
-                System.err.println("User " + msg.user + " is connected");
-                Message connexionMessage = new Message("Server","User " + msg.user + " is connected", -1);
-                instance.SendMessage(new Message("Server","Welcome new user. Please type '/nick your_name' to change your user name",Message.SERVER_MSG));
-                RecevoirMessage(null, connexionMessage);
-                SendUserList();
-            }
-
-        }
 
     }
 
@@ -234,6 +222,15 @@ public class Server implements MessagerieInterface {
             m += " " + u;
         }
         BroadcastMessage(new Message("Server",m,-1));
+
+        // Send the individual names
+        for (Map.Entry<Integer,String> entry : UserList.entrySet())
+        {
+            String message = "/UserName " + entry.getValue();
+            ThreadableSocket instance = UserSockets.get(entry.getKey());
+
+            instance.SendMessage(new Message("Server",message,Message.SERVER_MSG));
+        }
     }
 
     /** Returns the ID of the user with the Name that equals name
@@ -262,7 +259,6 @@ public class Server implements MessagerieInterface {
         System.err.println(connexionMessage);
         RecevoirMessage(null, connexionMessage);
 
-        ChildServers.remove(instance);
         ChildThreads.remove(thread);
 
         SendUserList();

@@ -20,7 +20,7 @@ public class MessagerieClient implements MessagerieClientITF {
 	@Override
 	public void envoyerMsgClient(Message leMessage) throws RemoteException {
 		listeMessages.add(leMessage);
-
+		leClient.RecevoirMessage(leMessage);
 	}
 	
 	ArrayList<Message> listeMessages;
