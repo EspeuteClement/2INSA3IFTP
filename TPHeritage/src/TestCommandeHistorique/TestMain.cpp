@@ -1,6 +1,6 @@
 #include "../HistoriqueCommande.h"
 #include "../CommandeTest.h"
-
+#include "../Dessin.h"
 int main()
 {
 	HistoriqueCommande liste;

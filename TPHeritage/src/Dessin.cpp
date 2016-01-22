@@ -11,9 +11,10 @@
 
 //-------------------------------------------------------- Include système
 using namespace std;
-#include <iostream>
-#include <unordered_map>
-#include <string>	
+//#include <iostream>
+//#include <unordered_map>
+#include <string>
+
 using namespace std;
 //------------------------------------------------------ Include personnel
 #include "Dessin.h"
@@ -35,51 +36,51 @@ using namespace std;
 //{
 //} //----- Fin de Méthode
 
-bool Dessin::AjouterObjet(Objet unObjet)
+bool Dessin::AjouterObjet(Objet* unObjet)
 {
-	string nom = unObjet.getName();
-	unordered_map<TypeListeObjets>::const_iterator trouver ListeObjet.find(nom);
+	string nom = unObjet->getNom();
+	ListeIterateur trouver = ListeObjets.find(nom);
 
 	/* Si l'objet existe déjà, on renvoie false*/
-	if (trouver != ListeObjet.end())
+	if (trouver != ListeObjets.end())
 	{
 		return false;
 	}
 
-	ListeObjet[nom] = unObjet;
+	ListeObjets[nom] = unObjet;
 	return true;
 }
 
-bool Dessin::RetirerObjet(string nom)
+bool Dessin::SupprimerObjet(string nom)
 {
-	ListeIterateur trouver ListeObjet.find(nom);
+	ListeIterateur trouver = ListeObjets.find(nom);
 
 	/** Si l'objet n'existe pas, on renvoie false */
-	if (trouver == ListeObjet.end())
+	if (trouver == ListeObjets.end())
 	{
 		return false;
 	}
 
-	ListeObjet.erase(nom);
+	ListeObjets.erase(nom);
 	return true;
 }
 
-bool Dessin::Enumere(ostream sortie)
+void Dessin::Enumere(ostream sortie)
 {
-	for(ListeIterateur iterateur = ListeObjet.cbegin();
-		iterateur != ListeObjet.cend();
+	for(ListeIterateur iterateur = ListeObjets.begin();
+		iterateur != ListeObjets.end();
 		iterateur ++)
 	{
-		ostream << iterateur.second.Decrire() << endl;
+		sortie << iterateur->second->Description() << endl;
 	}
 }
 
-bool Dessin::Sauver(ostream sortie)
+void Dessin::Sauver(ostream sortie)
 {
-	for(ListeIterateur iterateur = ListeObjet.cbegin();
-	iterateur != ListeObjet.cend();iterateur ++)
+	for(ListeIterateur iterateur = ListeObjets.begin();
+	iterateur != ListeObjets.end();iterateur ++)
 	{
-		ostream << iterateur.second.CommandeReconstruire() << endl;
+		sortie << iterateur->second->CommandeReconstruire() << endl;
 	}
 }
 
@@ -97,7 +98,7 @@ Dessin::Dessin ( const Dessin & unDessin )
 // Algorithme :
 //
 {
-	ListeObjet = unDessin.ListeObjet;
+	ListeObjets = unDessin.ListeObjets;
 #ifdef MAP
     cout << "Appel au constructeur de copie de <Dessin>" << endl;
 #endif
@@ -108,7 +109,7 @@ Dessin::Dessin ( )
 // Algorithme :
 //
 {
-	ListeObjet = unordered_map<String,int>();
+	ListeObjets = unordered_map<KEY_VALUE_LISTE>();
 #ifdef MAP
     cout << "Appel au constructeur de <Dessin>" << endl;
 #endif

@@ -10,8 +10,10 @@
 #define _DESSIN_H_
 
 //--------------------------------------------------- Interfaces utilisées
-#include <unordeored_map>
+#include <iostream>
+#include <unordered_map>
 #include <string>
+#include "Objet.h"
 
 using namespace std;
 //------------------------------------------------------------- Constantes 
@@ -30,8 +32,9 @@ class Dessin
 
 public:
 
-	typedef pair<String,int> TypeListeObjets;
-	typedef unordered_map<TypeListeObjets>::const_iterator ListeIterateur;
+#define KEY_VALUE_LISTE string,Objet*
+	//typedef pair<KEY_VALUE_LISTE> TypeListeObjets;
+	typedef unordered_map<KEY_VALUE_LISTE>::iterator ListeIterateur;
 //----------------------------------------------------- Méthodes publiques
     /** Ajoute l'Objet unObjet à la liste des objets
     *	du dessin.
@@ -40,7 +43,7 @@ public:
     *	@return TRUE si l'objet à bien été rajouté,
     *	FALSE si il n'à pas pu être ajouté (conflit de nom)
     */
-    bool AjouterObjet(Objet unObjet);
+    bool AjouterObjet(Objet* unObjet);
 
     /** Supprime l'objet qui possède le nom nom
     *
@@ -91,7 +94,7 @@ protected:
 private:
 //------------------------------------------------------- Attributs privés
 //TODO : Changer int en Objet
-unordered_map<TypeListeObjets> ListeObjets;
+unordered_map<KEY_VALUE_LISTE> ListeObjets;
 //---------------------------------------------------------- Classes amies
 
 //-------------------------------------------------------- Classes privées

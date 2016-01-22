@@ -23,4 +23,4 @@ add_executable(
 #Configuration de l'édition de liens
 
 
-#target_compile_features(CommandeTest PRIVATE cxx_range_for)
+target_compile_features(CommandeTestHistorique PRIVATE cxx_range_for)

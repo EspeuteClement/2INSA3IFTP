@@ -162,6 +162,30 @@ src/CommandeTest.cpp.s:
 	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/CommandeTest.cpp.s
 .PHONY : src/CommandeTest.cpp.s
 
+src/Dessin.o: src/Dessin.cpp.o
+.PHONY : src/Dessin.o
+
+# target to build an object file
+src/Dessin.cpp.o:
+	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/Dessin.cpp.o
+.PHONY : src/Dessin.cpp.o
+
+src/Dessin.i: src/Dessin.cpp.i
+.PHONY : src/Dessin.i
+
+# target to preprocess a source file
+src/Dessin.cpp.i:
+	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/Dessin.cpp.i
+.PHONY : src/Dessin.cpp.i
+
+src/Dessin.s: src/Dessin.cpp.s
+.PHONY : src/Dessin.s
+
+# target to generate assembly for a file
+src/Dessin.cpp.s:
+	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/Dessin.cpp.s
+.PHONY : src/Dessin.cpp.s
+
 src/HistoriqueCommande.o: src/HistoriqueCommande.cpp.o
 .PHONY : src/HistoriqueCommande.o
 
@@ -185,6 +209,30 @@ src/HistoriqueCommande.s: src/HistoriqueCommande.cpp.s
 src/HistoriqueCommande.cpp.s:
 	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/HistoriqueCommande.cpp.s
 .PHONY : src/HistoriqueCommande.cpp.s
+
+src/ObjetTest.o: src/ObjetTest.c.o
+.PHONY : src/ObjetTest.o
+
+# target to build an object file
+src/ObjetTest.c.o:
+	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/ObjetTest.c.o
+.PHONY : src/ObjetTest.c.o
+
+src/ObjetTest.i: src/ObjetTest.c.i
+.PHONY : src/ObjetTest.i
+
+# target to preprocess a source file
+src/ObjetTest.c.i:
+	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/ObjetTest.c.i
+.PHONY : src/ObjetTest.c.i
+
+src/ObjetTest.s: src/ObjetTest.c.s
+.PHONY : src/ObjetTest.s
+
+# target to generate assembly for a file
+src/ObjetTest.c.s:
+	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/ObjetTest.c.s
+.PHONY : src/ObjetTest.c.s
 
 src/TestCommandeHistorique/TestMain.o: src/TestCommandeHistorique/TestMain.cpp.o
 .PHONY : src/TestCommandeHistorique/TestMain.o
@@ -225,9 +273,15 @@ help:
 	@echo "... src/CommandeTest.o"
 	@echo "... src/CommandeTest.i"
 	@echo "... src/CommandeTest.s"
+	@echo "... src/Dessin.o"
+	@echo "... src/Dessin.i"
+	@echo "... src/Dessin.s"
 	@echo "... src/HistoriqueCommande.o"
 	@echo "... src/HistoriqueCommande.i"
 	@echo "... src/HistoriqueCommande.s"
+	@echo "... src/ObjetTest.o"
+	@echo "... src/ObjetTest.i"
+	@echo "... src/ObjetTest.s"
 	@echo "... src/TestCommandeHistorique/TestMain.o"
 	@echo "... src/TestCommandeHistorique/TestMain.i"
 	@echo "... src/TestCommandeHistorique/TestMain.s"

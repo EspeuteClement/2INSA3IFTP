@@ -13,6 +13,7 @@
 //--------------------------------------------------- Interfaces utilisées
 #include <string>
 #include <vector>
+#include "Point.h"
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------------------ Types
@@ -34,19 +35,19 @@ public:
      *@param unPoint le point que l'on fait le test
      *@return true si le point est dans l'objet et sinon false
      */
-	virtual bool estDedans ( Point unPoint );
+	virtual bool EstDedans ( Point unPoint ) = 0;
 
 	/**Preparer la chaine de la description de l'objet pour l'affichage
 	 *
 	 *@return la chaine pour l'affichage de la description de l'objet
 	 */
-    virtual std::string Description ();
+    virtual std::string Description () = 0;
 
 	/**Preparer la chaine pour reconstruire l'objet au courant
 	 *
 	 *@return la chaine pour reconstruire l'objet
 	 */
-    virtual std::string CommandeReconstruire ();
+    virtual std::string CommandeReconstruire () = 0;
 
     std::string getNom()
     {
