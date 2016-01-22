@@ -1,11 +1,11 @@
 /*************************************************************************
-                           ${file_base}  -  description
+                           Commande  -  description
                              -------------------
-    début                : ${date}
-    copyright            : (C) ${year} par ${user}
+    début                : 17/01/2016
+    copyright            : (C) 2016 par cespeute
 *************************************************************************/
 
-//---------- Réalisation de la classe <${file_base}> (fichier ${file_name}) --
+//---------- Réalisation de la classe <Commande> (fichier Commande.cpp) --
 
 //---------------------------------------------------------------- INCLUDE
 
@@ -14,7 +14,7 @@ using namespace std;
 #include <iostream>
 
 //------------------------------------------------------ Include personnel
-#include "${file_base}.h"
+#include "Commande.h"
 
 //------------------------------------------------------------- Constantes
 
@@ -27,50 +27,32 @@ using namespace std;
 //-------------------------------------------------------- Fonctions amies
 
 //----------------------------------------------------- Méthodes publiques
-// type ${file_base}::Méthode ( liste de paramètres )
-// Algorithme :
-//
-//{
-//} //----- Fin de Méthode
-
 
 //------------------------------------------------- Surcharge d'opérateurs
-${file_base} & ${file_base}::operator = ( const ${file_base} & un${file_base} )
-// Algorithme :
-//
-{
-} //----- Fin de operator =
 
 
 //-------------------------------------------- Constructeurs - destructeur
-${file_base}::${file_base} ( const ${file_base} & un${file_base} )
+
+
+
+Commande::Commande (/*Dessin* dessinHote*/)  /*: dessinHote(dessinHote)*/
 // Algorithme :
 //
 {
 #ifdef MAP
-    cout << "Appel au constructeur de copie de <${file_base}>" << endl;
+    cout << "Appel au constructeur de <Commande>" << endl;
 #endif
-} //----- Fin de ${file_base} (constructeur de copie)
+} //----- Fin de Commande
 
 
-${file_base}::${file_base} ( )
+Commande::~Commande ()
 // Algorithme :
 //
 {
 #ifdef MAP
-    cout << "Appel au constructeur de <${file_base}>" << endl;
+    cout << "Appel au destructeur de <Commande>" << endl;
 #endif
-} //----- Fin de ${file_base}
-
-
-${file_base}::~${file_base} ( )
-// Algorithme :
-//
-{
-#ifdef MAP
-    cout << "Appel au destructeur de <${file_base}>" << endl;
-#endif
-} //----- Fin de ~${file_base}
+} //----- Fin de ~Commande
 
 
 //------------------------------------------------------------------ PRIVE

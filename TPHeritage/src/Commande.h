@@ -51,7 +51,7 @@ public:
     *
     *   @param dessinHote le Dessin sur lequel on doit effectuer la commande
     */
-    Commande ( Dessin* dessinHote);
+    Commande ( /*Dessin* dessinHote*/   );
 
     virtual ~Commande ( );
 
@@ -68,7 +68,8 @@ protected:
 
 private:
 //------------------------------------------------------- Attributs privés
-    Dessin* dessinHote;
+    /* Le Dessin sur lequel les commandes doivent être effectuées*/
+    //Dessin* dessinHote;
 //---------------------------------------------------------- Classes amies
 
 //-------------------------------------------------------- Classes privées
