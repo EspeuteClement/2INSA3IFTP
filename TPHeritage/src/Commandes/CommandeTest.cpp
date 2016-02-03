@@ -17,7 +17,7 @@ void CommandeTest::Annuler()
 }
 
 
-CommandeTest::CommandeTest()
+CommandeTest::CommandeTest() : CommandeTest::super(NULL)
 {
 	idCommande = nombreCommandes ++;
 }

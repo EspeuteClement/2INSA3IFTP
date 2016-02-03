@@ -1,21 +1,20 @@
 /*************************************************************************
-                           Commande  -  description
+                           CommandeDeplacerObjet  -  description
                              -------------------
     début                : 17/01/2016
     copyright            : (C) 2016 par cespeute
 *************************************************************************/
 
-//---------- Réalisation de la classe <Commande> (fichier Commande.cpp) --
+//---------- Réalisation de la classe <CommandeDeplacerObjet> (fichier CommandeDeplacerObjet.cpp) --
 
 //---------------------------------------------------------------- INCLUDE
 
 //-------------------------------------------------------- Include système
-using namespace std;
+
 #include <iostream>
-
+using namespace std;
 //------------------------------------------------------ Include personnel
-#include "Commande.h"
-
+#include "CommandeDeplacerObjet.h"
 //------------------------------------------------------------- Constantes
 
 //---------------------------------------------------- Variables de classe
@@ -27,7 +26,26 @@ using namespace std;
 //-------------------------------------------------------- Fonctions amies
 
 //----------------------------------------------------- Méthodes publiques
+bool CommandeDeplacerObjet::Executer()
+{
+#ifdef DEBUG
+	cout << "#Appel de CommandeDeplacerObjet" << endl;
+#endif
+    if (objetDeplace != NULL)
+    {
+        //return objetDeplace->Deplacer(dx, dy);
+    }
+    return false;
+}
 
+void CommandeDeplacerObjet::Annuler()
+{
+	cout << "#Annulation de CommandeDeplacerObjet" << endl;
+	if (objetDeplace != NULL)
+    {
+        //objetDeplace->Deplacer(-dx, -dy);
+    }
+}
 //------------------------------------------------- Surcharge d'opérateurs
 
 
@@ -35,24 +53,30 @@ using namespace std;
 
 
 
-Commande::Commande (Dessin* dessinHote)  : dessinHote(dessinHote)
+CommandeDeplacerObjet::CommandeDeplacerObjet (Dessin* dessinHote,
+											     string nomObjet, long dx, long dy) : 
+	super(dessinHote),
+	nomObjet(nomObjet)
 // Algorithme :
 //
 {
 #ifdef MAP
-    cout << "Appel au constructeur de <Commande>" << endl;
+    cout << "Appel au constructeur de <CommandeDeplacerObjet>" << endl;
 #endif
-} //----- Fin de Commande
+    objetDeplace = dessinHote->getObjet(nomObjet);
+} //----- Fin de CommandeDeplacerObjet
 
 
-Commande::~Commande ()
+CommandeDeplacerObjet::~CommandeDeplacerObjet ()
 // Algorithme :
 //
 {
 #ifdef MAP
-    cout << "Appel au destructeur de <Commande>" << endl;
+    cout << "Appel au destructeur de <CommandeDeplacerObjet>" << endl;
 #endif
-} //----- Fin de ~Commande
+    // On supprime l'objet si la commande n'a pas été annulée
+    // (Donc l'objet ne fait plus partie du déssin)
+} //----- Fin de ~CommandeDeplacerObjet
 
 
 //------------------------------------------------------------------ PRIVE

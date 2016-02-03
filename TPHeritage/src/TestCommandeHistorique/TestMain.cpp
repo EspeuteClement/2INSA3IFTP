@@ -1,10 +1,11 @@
 #include "../HistoriqueCommande.h"
-#include "../CommandeTest.h"
+#include "../Commandes/CommandeTest.h"
 #include "../Dessin.h"
+#include "../GestionEntreSortie.h"
 int main()
 {
 	HistoriqueCommande liste;
-	for (int i = 0; i < 500; i++)
+	for (int i = 0; i < 50; i++)
 	{
 		liste.AjouterCommande(new CommandeTest());
 	}
@@ -14,20 +15,15 @@ int main()
 		liste.AnnulerCommande();
 	}
 
-	for (int i = 0; i < 30; i++)
-	{
-		liste.ReprendreCommande();
-	}
-
 	for (int i = 0; i < 50; i++)
 	{
-		liste.AnnulerCommande();
-	}
-
-	for (int i = 0; i < 5; i++)
-	{
 		liste.ReprendreCommande();
 	}
+
+	// for (int i = 0; i < 50; i++)
+	// {
+	// 	liste.AnnulerCommande();
+	// }
 
 	liste.AjouterCommande(new CommandeTest());
 

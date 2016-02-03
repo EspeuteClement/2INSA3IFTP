@@ -1,0 +1,6 @@
+LOAD tests/sauvegarde.sav
+LIST
+UNDO
+LIST
+REDO
+LIST

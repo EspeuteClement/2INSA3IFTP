@@ -14,6 +14,7 @@
 #include <unordered_map>
 #include <string>
 #include "Objet.h"
+//#include "CommandeClear.h"
 
 using namespace std;
 //------------------------------------------------------------- Constantes 
@@ -38,6 +39,10 @@ public:
 //----------------------------------------------------- Méthodes publiques
     /** Ajoute l'Objet unObjet à la liste des objets
     *	du dessin.
+    *   </br>
+    *   Contact : Si l'Objet est toujours dans le Dessin à la 
+    *   fin de la vie du Dessin, il serra automatiquement
+    *   delete.
     *	@param unObjet L'objet à rajouter à la liste
     *	
     *	@return TRUE si l'objet à bien été rajouté,
@@ -46,23 +51,43 @@ public:
     bool AjouterObjet(Objet* unObjet);
 
     /** Supprime l'objet qui possède le nom nom
-    *
+    *   </br>
+    *   Contrat : L'objet n'est pas delete. Cette
+    *   opération est laissée à la charge de 
+    *   l’utilisateur.
     *	@param nom Le nom de l'objet à supprimer
-    *	@param TRUE si l'objet à bien été supprimé,
-    *	FALSE sinon.
+    *	@return NULL si aucun objet ne correspond
+    *   à nom dans le tableau, sinon renvoie un pointeur
+    *   vers l'objet qui à été supprimé.
     */
-    bool SupprimerObjet(string nom);
+    Objet* SupprimerObjet(const string nom);
 
     /** Fait la liste et la description de tous les objets
     *	du dessin et l'imprime dans sortie
     *	@param sortie L'OutputStream dans lequel
     */
-    void Enumere(ostream sortie);
+    void Enumere(ostream& sortie);
 
     /** Écrit une liste de commande qui permet de retrouver
     *	un état identique à celui du dessin si exécuté.
 	*/
-    void Sauver(ostream sortie);
+    void Sauver(ostream& sortie);
+
+    /** Renvoie l'objet dans le dessin qui possède le nom nom
+    *   
+    *   @param nom Le nom de l'objet à récuperer
+    *   @return Un pointeur vers l'objet demmandé, ou NULL si l'objet
+    *   n'existe pas.
+    */
+    inline Objet* getObjet(const string nom)
+    {
+        ListeIterateur trouver = ListeObjets->find(nom);
+        if (trouver != ListeObjets->end())
+        {
+            return (*ListeObjets)[nom];
+        }
+        return NULL;
+    }
 
 //------------------------------------------------- Surcharge d'opérateurs
     Dessin & operator = ( const Dessin & unDessin );
@@ -93,10 +118,9 @@ protected:
 
 private:
 //------------------------------------------------------- Attributs privés
-//TODO : Changer int en Objet
-unordered_map<KEY_VALUE_LISTE> ListeObjets;
+unordered_map<KEY_VALUE_LISTE>* ListeObjets;
 //---------------------------------------------------------- Classes amies
-
+friend class CommandeClear;
 //-------------------------------------------------------- Classes privées
 
 //----------------------------------------------------------- Types privés

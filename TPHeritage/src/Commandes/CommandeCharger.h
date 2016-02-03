@@ -1,60 +1,65 @@
 /*************************************************************************
-                           Commande  -  description
+                           CommandeCharger  -  description
                              -------------------
     début                : 17/01/2016
     copyright            : (C) 2016 par cespeute
 *************************************************************************/
 
-//---------- Interface de la classe <Commande> (fichier Commande.h) ------
-#if ! defined ( _COMMANDE_H )
-#define _COMMANDE_H
+//---------- Interface de la classe <CommandeCharger> (fichier CommandeCharger.h) ------
+#if ! defined ( _COMMANDE_SAUVER_H_ )
+#define _COMMANDE_SAUVER_H_
 
 //--------------------------------------------------- Interfaces utilisées
-#include "Dessin.h"
-
+#include "../Commande.h"
+#include "../Objet.h"
+#include "../HistoriqueCommande.h"
+#include <string>
+#include <vector>
+#include <fstream>
+using namespace std;
 //------------------------------------------------------------- Constantes 
 
 //------------------------------------------------------------------ Types 
 
 //------------------------------------------------------------------------ 
-// Rôle de la classe <Commande>
+// Rôle de la classe <CommandeCharger>
 // Implémente le Command pattern. 
-// Permet de représenter concrètement un appel de commande, et de pouvoir
+// Permet de représenter concrètement un appel de CommandeCharger, et de pouvoir
 // l'annuler.
 //------------------------------------------------------------------------ 
 
-class Commande
+class CommandeCharger : public Commande
 {
 //----------------------------------------------------------------- PUBLIC
 
 public:
 //----------------------------------------------------- Méthodes publiques
-    /** Execute la commande
+    /** Execute la CommandeCharger
     *   
-    *   @return <em>true</em> si la commande s'est bien exécuté, 
+    *   @return <em>true</em> si la CommandeCharger s'est bien exécuté, 
     *   <em>false</em> si elle à échouée.
     */
-    virtual bool Executer() = 0;
+    bool Executer();
 
-    /** Annule la commande
+    /** Annule la CommandeCharger
     */
-    virtual void Annuler() = 0;
+    void Annuler();
 
 //-------------------------------------------- Constructeurs - destructeur
 
-    /** Constructeur de copie d'une commande
+    /** Constructeur de copie d'une CommandeCharger
     *   
-    *   @param uneCommande la commande à copier
+    *   @param uneCommandeCharger la CommandeCharger à copier
     */
-    Commande ( const Commande & uneCommande );
+    CommandeCharger ( const CommandeCharger & uneCommandeCharger );
 
-    /** Constructeur de la commande
+    /** Constructeur de la CommandeCharger
     *
-    *   @param dessinHote le Dessin sur lequel on doit effectuer la commande
+    *   @param dessinHote le Dessin sur lequel on doit effectuer la CommandeCharger
     */
-    Commande ( Dessin* dessinHote );
+    CommandeCharger (Dessin* dessinHote, string chemin);
 
-    virtual ~Commande ( );
+    virtual ~CommandeCharger ( );
 
 //------------------------------------------------------------------ PRIVE 
 
@@ -66,19 +71,26 @@ private:
 
 protected:
 //----------------------------------------------------- Attributs protégés
-    /* Le Dessin sur lequel les commandes doivent être effectuées*/
-    Dessin* dessinHote;
+
 private:
 //------------------------------------------------------- Attributs privés
-    
+    // L'historique des commandes qui seront effectuées
+    // pour recréer le dessin (ce qui permet d'annuler)
+    // la commande
+    HistoriqueCommande *historique;
+
+    // La où l'on doit écrire
+    ifstream* entre;
+
+    string chemin;
 //---------------------------------------------------------- Classes amies
 
 //-------------------------------------------------------- Classes privées
 
 //----------------------------------------------------------- Types privés
-
+    typedef Commande super;
 };
 
-//----------------------------------------- Types dépendants de <Commande>
+//----------------------------------------- Types dépendants de <CommandeCharger>
 
-#endif // _COMMANDE_H
+#endif // _CommandeCharger_AJOUTER_OBJET_H

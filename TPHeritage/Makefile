@@ -102,6 +102,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named CommandeTestDessin
+
+# Build rule for target.
+CommandeTestDessin: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 CommandeTestDessin
+.PHONY : CommandeTestDessin
+
+# fast build rule for target.
+CommandeTestDessin/fast:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/build
+.PHONY : CommandeTestDessin/fast
+
+#=============================================================================
 # Target rules for targets named CommandeTestHistorique
 
 # Build rule for target.
@@ -119,6 +132,7 @@ src/Commande.o: src/Commande.cpp.o
 
 # target to build an object file
 src/Commande.cpp.o:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/Commande.cpp.o
 	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/Commande.cpp.o
 .PHONY : src/Commande.cpp.o
 
@@ -127,6 +141,7 @@ src/Commande.i: src/Commande.cpp.i
 
 # target to preprocess a source file
 src/Commande.cpp.i:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/Commande.cpp.i
 	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/Commande.cpp.i
 .PHONY : src/Commande.cpp.i
 
@@ -135,38 +150,205 @@ src/Commande.s: src/Commande.cpp.s
 
 # target to generate assembly for a file
 src/Commande.cpp.s:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/Commande.cpp.s
 	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/Commande.cpp.s
 .PHONY : src/Commande.cpp.s
 
-src/CommandeTest.o: src/CommandeTest.cpp.o
-.PHONY : src/CommandeTest.o
+src/Commandes/CommandeAjouterObjet.o: src/Commandes/CommandeAjouterObjet.cpp.o
+.PHONY : src/Commandes/CommandeAjouterObjet.o
 
 # target to build an object file
-src/CommandeTest.cpp.o:
-	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/CommandeTest.cpp.o
-.PHONY : src/CommandeTest.cpp.o
+src/Commandes/CommandeAjouterObjet.cpp.o:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/Commandes/CommandeAjouterObjet.cpp.o
+	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/Commandes/CommandeAjouterObjet.cpp.o
+.PHONY : src/Commandes/CommandeAjouterObjet.cpp.o
 
-src/CommandeTest.i: src/CommandeTest.cpp.i
-.PHONY : src/CommandeTest.i
+src/Commandes/CommandeAjouterObjet.i: src/Commandes/CommandeAjouterObjet.cpp.i
+.PHONY : src/Commandes/CommandeAjouterObjet.i
 
 # target to preprocess a source file
-src/CommandeTest.cpp.i:
-	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/CommandeTest.cpp.i
-.PHONY : src/CommandeTest.cpp.i
+src/Commandes/CommandeAjouterObjet.cpp.i:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/Commandes/CommandeAjouterObjet.cpp.i
+	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/Commandes/CommandeAjouterObjet.cpp.i
+.PHONY : src/Commandes/CommandeAjouterObjet.cpp.i
 
-src/CommandeTest.s: src/CommandeTest.cpp.s
-.PHONY : src/CommandeTest.s
+src/Commandes/CommandeAjouterObjet.s: src/Commandes/CommandeAjouterObjet.cpp.s
+.PHONY : src/Commandes/CommandeAjouterObjet.s
 
 # target to generate assembly for a file
-src/CommandeTest.cpp.s:
-	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/CommandeTest.cpp.s
-.PHONY : src/CommandeTest.cpp.s
+src/Commandes/CommandeAjouterObjet.cpp.s:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/Commandes/CommandeAjouterObjet.cpp.s
+	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/Commandes/CommandeAjouterObjet.cpp.s
+.PHONY : src/Commandes/CommandeAjouterObjet.cpp.s
+
+src/Commandes/CommandeAppartenanceObjet.o: src/Commandes/CommandeAppartenanceObjet.cpp.o
+.PHONY : src/Commandes/CommandeAppartenanceObjet.o
+
+# target to build an object file
+src/Commandes/CommandeAppartenanceObjet.cpp.o:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/Commandes/CommandeAppartenanceObjet.cpp.o
+	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/Commandes/CommandeAppartenanceObjet.cpp.o
+.PHONY : src/Commandes/CommandeAppartenanceObjet.cpp.o
+
+src/Commandes/CommandeAppartenanceObjet.i: src/Commandes/CommandeAppartenanceObjet.cpp.i
+.PHONY : src/Commandes/CommandeAppartenanceObjet.i
+
+# target to preprocess a source file
+src/Commandes/CommandeAppartenanceObjet.cpp.i:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/Commandes/CommandeAppartenanceObjet.cpp.i
+	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/Commandes/CommandeAppartenanceObjet.cpp.i
+.PHONY : src/Commandes/CommandeAppartenanceObjet.cpp.i
+
+src/Commandes/CommandeAppartenanceObjet.s: src/Commandes/CommandeAppartenanceObjet.cpp.s
+.PHONY : src/Commandes/CommandeAppartenanceObjet.s
+
+# target to generate assembly for a file
+src/Commandes/CommandeAppartenanceObjet.cpp.s:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/Commandes/CommandeAppartenanceObjet.cpp.s
+	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/Commandes/CommandeAppartenanceObjet.cpp.s
+.PHONY : src/Commandes/CommandeAppartenanceObjet.cpp.s
+
+src/Commandes/CommandeCharger.o: src/Commandes/CommandeCharger.cpp.o
+.PHONY : src/Commandes/CommandeCharger.o
+
+# target to build an object file
+src/Commandes/CommandeCharger.cpp.o:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/Commandes/CommandeCharger.cpp.o
+	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/Commandes/CommandeCharger.cpp.o
+.PHONY : src/Commandes/CommandeCharger.cpp.o
+
+src/Commandes/CommandeCharger.i: src/Commandes/CommandeCharger.cpp.i
+.PHONY : src/Commandes/CommandeCharger.i
+
+# target to preprocess a source file
+src/Commandes/CommandeCharger.cpp.i:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/Commandes/CommandeCharger.cpp.i
+	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/Commandes/CommandeCharger.cpp.i
+.PHONY : src/Commandes/CommandeCharger.cpp.i
+
+src/Commandes/CommandeCharger.s: src/Commandes/CommandeCharger.cpp.s
+.PHONY : src/Commandes/CommandeCharger.s
+
+# target to generate assembly for a file
+src/Commandes/CommandeCharger.cpp.s:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/Commandes/CommandeCharger.cpp.s
+	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/Commandes/CommandeCharger.cpp.s
+.PHONY : src/Commandes/CommandeCharger.cpp.s
+
+src/Commandes/CommandeClear.o: src/Commandes/CommandeClear.cpp.o
+.PHONY : src/Commandes/CommandeClear.o
+
+# target to build an object file
+src/Commandes/CommandeClear.cpp.o:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/Commandes/CommandeClear.cpp.o
+	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/Commandes/CommandeClear.cpp.o
+.PHONY : src/Commandes/CommandeClear.cpp.o
+
+src/Commandes/CommandeClear.i: src/Commandes/CommandeClear.cpp.i
+.PHONY : src/Commandes/CommandeClear.i
+
+# target to preprocess a source file
+src/Commandes/CommandeClear.cpp.i:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/Commandes/CommandeClear.cpp.i
+	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/Commandes/CommandeClear.cpp.i
+.PHONY : src/Commandes/CommandeClear.cpp.i
+
+src/Commandes/CommandeClear.s: src/Commandes/CommandeClear.cpp.s
+.PHONY : src/Commandes/CommandeClear.s
+
+# target to generate assembly for a file
+src/Commandes/CommandeClear.cpp.s:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/Commandes/CommandeClear.cpp.s
+	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/Commandes/CommandeClear.cpp.s
+.PHONY : src/Commandes/CommandeClear.cpp.s
+
+src/Commandes/CommandeDeplacerObjet.o: src/Commandes/CommandeDeplacerObjet.cpp.o
+.PHONY : src/Commandes/CommandeDeplacerObjet.o
+
+# target to build an object file
+src/Commandes/CommandeDeplacerObjet.cpp.o:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/Commandes/CommandeDeplacerObjet.cpp.o
+	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/Commandes/CommandeDeplacerObjet.cpp.o
+.PHONY : src/Commandes/CommandeDeplacerObjet.cpp.o
+
+src/Commandes/CommandeDeplacerObjet.i: src/Commandes/CommandeDeplacerObjet.cpp.i
+.PHONY : src/Commandes/CommandeDeplacerObjet.i
+
+# target to preprocess a source file
+src/Commandes/CommandeDeplacerObjet.cpp.i:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/Commandes/CommandeDeplacerObjet.cpp.i
+	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/Commandes/CommandeDeplacerObjet.cpp.i
+.PHONY : src/Commandes/CommandeDeplacerObjet.cpp.i
+
+src/Commandes/CommandeDeplacerObjet.s: src/Commandes/CommandeDeplacerObjet.cpp.s
+.PHONY : src/Commandes/CommandeDeplacerObjet.s
+
+# target to generate assembly for a file
+src/Commandes/CommandeDeplacerObjet.cpp.s:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/Commandes/CommandeDeplacerObjet.cpp.s
+	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/Commandes/CommandeDeplacerObjet.cpp.s
+.PHONY : src/Commandes/CommandeDeplacerObjet.cpp.s
+
+src/Commandes/CommandeSupprimerObjet.o: src/Commandes/CommandeSupprimerObjet.cpp.o
+.PHONY : src/Commandes/CommandeSupprimerObjet.o
+
+# target to build an object file
+src/Commandes/CommandeSupprimerObjet.cpp.o:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/Commandes/CommandeSupprimerObjet.cpp.o
+	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/Commandes/CommandeSupprimerObjet.cpp.o
+.PHONY : src/Commandes/CommandeSupprimerObjet.cpp.o
+
+src/Commandes/CommandeSupprimerObjet.i: src/Commandes/CommandeSupprimerObjet.cpp.i
+.PHONY : src/Commandes/CommandeSupprimerObjet.i
+
+# target to preprocess a source file
+src/Commandes/CommandeSupprimerObjet.cpp.i:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/Commandes/CommandeSupprimerObjet.cpp.i
+	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/Commandes/CommandeSupprimerObjet.cpp.i
+.PHONY : src/Commandes/CommandeSupprimerObjet.cpp.i
+
+src/Commandes/CommandeSupprimerObjet.s: src/Commandes/CommandeSupprimerObjet.cpp.s
+.PHONY : src/Commandes/CommandeSupprimerObjet.s
+
+# target to generate assembly for a file
+src/Commandes/CommandeSupprimerObjet.cpp.s:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/Commandes/CommandeSupprimerObjet.cpp.s
+	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/Commandes/CommandeSupprimerObjet.cpp.s
+.PHONY : src/Commandes/CommandeSupprimerObjet.cpp.s
+
+src/Commandes/CommandeTest.o: src/Commandes/CommandeTest.cpp.o
+.PHONY : src/Commandes/CommandeTest.o
+
+# target to build an object file
+src/Commandes/CommandeTest.cpp.o:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/Commandes/CommandeTest.cpp.o
+	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/Commandes/CommandeTest.cpp.o
+.PHONY : src/Commandes/CommandeTest.cpp.o
+
+src/Commandes/CommandeTest.i: src/Commandes/CommandeTest.cpp.i
+.PHONY : src/Commandes/CommandeTest.i
+
+# target to preprocess a source file
+src/Commandes/CommandeTest.cpp.i:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/Commandes/CommandeTest.cpp.i
+	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/Commandes/CommandeTest.cpp.i
+.PHONY : src/Commandes/CommandeTest.cpp.i
+
+src/Commandes/CommandeTest.s: src/Commandes/CommandeTest.cpp.s
+.PHONY : src/Commandes/CommandeTest.s
+
+# target to generate assembly for a file
+src/Commandes/CommandeTest.cpp.s:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/Commandes/CommandeTest.cpp.s
+	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/Commandes/CommandeTest.cpp.s
+.PHONY : src/Commandes/CommandeTest.cpp.s
 
 src/Dessin.o: src/Dessin.cpp.o
 .PHONY : src/Dessin.o
 
 # target to build an object file
 src/Dessin.cpp.o:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/Dessin.cpp.o
 	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/Dessin.cpp.o
 .PHONY : src/Dessin.cpp.o
 
@@ -175,6 +357,7 @@ src/Dessin.i: src/Dessin.cpp.i
 
 # target to preprocess a source file
 src/Dessin.cpp.i:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/Dessin.cpp.i
 	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/Dessin.cpp.i
 .PHONY : src/Dessin.cpp.i
 
@@ -183,14 +366,43 @@ src/Dessin.s: src/Dessin.cpp.s
 
 # target to generate assembly for a file
 src/Dessin.cpp.s:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/Dessin.cpp.s
 	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/Dessin.cpp.s
 .PHONY : src/Dessin.cpp.s
+
+src/GestionEntreSortie.o: src/GestionEntreSortie.cpp.o
+.PHONY : src/GestionEntreSortie.o
+
+# target to build an object file
+src/GestionEntreSortie.cpp.o:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/GestionEntreSortie.cpp.o
+	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/GestionEntreSortie.cpp.o
+.PHONY : src/GestionEntreSortie.cpp.o
+
+src/GestionEntreSortie.i: src/GestionEntreSortie.cpp.i
+.PHONY : src/GestionEntreSortie.i
+
+# target to preprocess a source file
+src/GestionEntreSortie.cpp.i:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/GestionEntreSortie.cpp.i
+	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/GestionEntreSortie.cpp.i
+.PHONY : src/GestionEntreSortie.cpp.i
+
+src/GestionEntreSortie.s: src/GestionEntreSortie.cpp.s
+.PHONY : src/GestionEntreSortie.s
+
+# target to generate assembly for a file
+src/GestionEntreSortie.cpp.s:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/GestionEntreSortie.cpp.s
+	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/GestionEntreSortie.cpp.s
+.PHONY : src/GestionEntreSortie.cpp.s
 
 src/HistoriqueCommande.o: src/HistoriqueCommande.cpp.o
 .PHONY : src/HistoriqueCommande.o
 
 # target to build an object file
 src/HistoriqueCommande.cpp.o:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/HistoriqueCommande.cpp.o
 	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/HistoriqueCommande.cpp.o
 .PHONY : src/HistoriqueCommande.cpp.o
 
@@ -199,6 +411,7 @@ src/HistoriqueCommande.i: src/HistoriqueCommande.cpp.i
 
 # target to preprocess a source file
 src/HistoriqueCommande.cpp.i:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/HistoriqueCommande.cpp.i
 	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/HistoriqueCommande.cpp.i
 .PHONY : src/HistoriqueCommande.cpp.i
 
@@ -207,32 +420,36 @@ src/HistoriqueCommande.s: src/HistoriqueCommande.cpp.s
 
 # target to generate assembly for a file
 src/HistoriqueCommande.cpp.s:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/HistoriqueCommande.cpp.s
 	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/HistoriqueCommande.cpp.s
 .PHONY : src/HistoriqueCommande.cpp.s
 
-src/ObjetTest.o: src/ObjetTest.c.o
+src/ObjetTest.o: src/ObjetTest.cpp.o
 .PHONY : src/ObjetTest.o
 
 # target to build an object file
-src/ObjetTest.c.o:
-	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/ObjetTest.c.o
-.PHONY : src/ObjetTest.c.o
+src/ObjetTest.cpp.o:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/ObjetTest.cpp.o
+	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/ObjetTest.cpp.o
+.PHONY : src/ObjetTest.cpp.o
 
-src/ObjetTest.i: src/ObjetTest.c.i
+src/ObjetTest.i: src/ObjetTest.cpp.i
 .PHONY : src/ObjetTest.i
 
 # target to preprocess a source file
-src/ObjetTest.c.i:
-	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/ObjetTest.c.i
-.PHONY : src/ObjetTest.c.i
+src/ObjetTest.cpp.i:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/ObjetTest.cpp.i
+	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/ObjetTest.cpp.i
+.PHONY : src/ObjetTest.cpp.i
 
-src/ObjetTest.s: src/ObjetTest.c.s
+src/ObjetTest.s: src/ObjetTest.cpp.s
 .PHONY : src/ObjetTest.s
 
 # target to generate assembly for a file
-src/ObjetTest.c.s:
-	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/ObjetTest.c.s
-.PHONY : src/ObjetTest.c.s
+src/ObjetTest.cpp.s:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/ObjetTest.cpp.s
+	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/ObjetTest.cpp.s
+.PHONY : src/ObjetTest.cpp.s
 
 src/TestCommandeHistorique/TestMain.o: src/TestCommandeHistorique/TestMain.cpp.o
 .PHONY : src/TestCommandeHistorique/TestMain.o
@@ -258,6 +475,57 @@ src/TestCommandeHistorique/TestMain.cpp.s:
 	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/TestCommandeHistorique/TestMain.cpp.s
 .PHONY : src/TestCommandeHistorique/TestMain.cpp.s
 
+src/TestDessin/TestDessin.o: src/TestDessin/TestDessin.cpp.o
+.PHONY : src/TestDessin/TestDessin.o
+
+# target to build an object file
+src/TestDessin/TestDessin.cpp.o:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/TestDessin/TestDessin.cpp.o
+.PHONY : src/TestDessin/TestDessin.cpp.o
+
+src/TestDessin/TestDessin.i: src/TestDessin/TestDessin.cpp.i
+.PHONY : src/TestDessin/TestDessin.i
+
+# target to preprocess a source file
+src/TestDessin/TestDessin.cpp.i:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/TestDessin/TestDessin.cpp.i
+.PHONY : src/TestDessin/TestDessin.cpp.i
+
+src/TestDessin/TestDessin.s: src/TestDessin/TestDessin.cpp.s
+.PHONY : src/TestDessin/TestDessin.s
+
+# target to generate assembly for a file
+src/TestDessin/TestDessin.cpp.s:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/TestDessin/TestDessin.cpp.s
+.PHONY : src/TestDessin/TestDessin.cpp.s
+
+src/TestMain.o: src/TestMain.cpp.o
+.PHONY : src/TestMain.o
+
+# target to build an object file
+src/TestMain.cpp.o:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/TestMain.cpp.o
+	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/TestMain.cpp.o
+.PHONY : src/TestMain.cpp.o
+
+src/TestMain.i: src/TestMain.cpp.i
+.PHONY : src/TestMain.i
+
+# target to preprocess a source file
+src/TestMain.cpp.i:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/TestMain.cpp.i
+	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/TestMain.cpp.i
+.PHONY : src/TestMain.cpp.i
+
+src/TestMain.s: src/TestMain.cpp.s
+.PHONY : src/TestMain.s
+
+# target to generate assembly for a file
+src/TestMain.cpp.s:
+	$(MAKE) -f CMakeFiles/CommandeTestDessin.dir/build.make CMakeFiles/CommandeTestDessin.dir/src/TestMain.cpp.s
+	$(MAKE) -f CMakeFiles/CommandeTestHistorique.dir/build.make CMakeFiles/CommandeTestHistorique.dir/src/TestMain.cpp.s
+.PHONY : src/TestMain.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -267,15 +535,37 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... CommandeTestHistorique"
+	@echo "... CommandeTestDessin"
 	@echo "... src/Commande.o"
 	@echo "... src/Commande.i"
 	@echo "... src/Commande.s"
-	@echo "... src/CommandeTest.o"
-	@echo "... src/CommandeTest.i"
-	@echo "... src/CommandeTest.s"
+	@echo "... src/Commandes/CommandeAjouterObjet.o"
+	@echo "... src/Commandes/CommandeAjouterObjet.i"
+	@echo "... src/Commandes/CommandeAjouterObjet.s"
+	@echo "... src/Commandes/CommandeAppartenanceObjet.o"
+	@echo "... src/Commandes/CommandeAppartenanceObjet.i"
+	@echo "... src/Commandes/CommandeAppartenanceObjet.s"
+	@echo "... src/Commandes/CommandeCharger.o"
+	@echo "... src/Commandes/CommandeCharger.i"
+	@echo "... src/Commandes/CommandeCharger.s"
+	@echo "... src/Commandes/CommandeClear.o"
+	@echo "... src/Commandes/CommandeClear.i"
+	@echo "... src/Commandes/CommandeClear.s"
+	@echo "... src/Commandes/CommandeDeplacerObjet.o"
+	@echo "... src/Commandes/CommandeDeplacerObjet.i"
+	@echo "... src/Commandes/CommandeDeplacerObjet.s"
+	@echo "... src/Commandes/CommandeSupprimerObjet.o"
+	@echo "... src/Commandes/CommandeSupprimerObjet.i"
+	@echo "... src/Commandes/CommandeSupprimerObjet.s"
+	@echo "... src/Commandes/CommandeTest.o"
+	@echo "... src/Commandes/CommandeTest.i"
+	@echo "... src/Commandes/CommandeTest.s"
 	@echo "... src/Dessin.o"
 	@echo "... src/Dessin.i"
 	@echo "... src/Dessin.s"
+	@echo "... src/GestionEntreSortie.o"
+	@echo "... src/GestionEntreSortie.i"
+	@echo "... src/GestionEntreSortie.s"
 	@echo "... src/HistoriqueCommande.o"
 	@echo "... src/HistoriqueCommande.i"
 	@echo "... src/HistoriqueCommande.s"
@@ -285,6 +575,12 @@ help:
 	@echo "... src/TestCommandeHistorique/TestMain.o"
 	@echo "... src/TestCommandeHistorique/TestMain.i"
 	@echo "... src/TestCommandeHistorique/TestMain.s"
+	@echo "... src/TestDessin/TestDessin.o"
+	@echo "... src/TestDessin/TestDessin.i"
+	@echo "... src/TestDessin/TestDessin.s"
+	@echo "... src/TestMain.o"
+	@echo "... src/TestMain.i"
+	@echo "... src/TestMain.s"
 .PHONY : help
 
 

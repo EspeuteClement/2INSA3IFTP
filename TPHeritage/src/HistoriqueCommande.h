@@ -28,9 +28,7 @@ class HistoriqueCommande
 //----------------------------------------------------------------- PUBLIC
 
 public:
-    /** Le nombre maximal de commandes à un instant donnée dans la
-    liste des commandes */
-    static const unsigned int MAX_COMMANDES;
+    
 
 //----------------------------------------------------- Méthodes publiques
     /** Ajoute laCommande à la liste des commandes et l'exécute.
@@ -70,13 +68,16 @@ public:
 
 
 //-------------------------------------------- Constructeurs - destructeur
+    /** Constructeur de copie d'HistoriqueCommande
+    *
+    */
     HistoriqueCommande ( const HistoriqueCommande & unHistoriqueCommande );
-    // Mode d'emploi (constructeur de copie) :
-    //
-    // Contrat :
-    //
 
-    HistoriqueCommande ( );
+    /** Constructeur par défaut d' HistoriqueCommande
+    *   @param maxCommandes Le nombre maximum de commandes annulables
+    *   (par défaut 30)
+    */
+    HistoriqueCommande (int maxCommandes = 30);
     // Mode d'emploi :
     //
     // Contrat :
@@ -100,16 +101,16 @@ private:
     commande actuelle*/
     inline int getProchaineCommande()
     {
-        return (positionCommandeCourante+1) % MAX_COMMANDES;
+        return (positionCommandeCourante+1) % maxCommandes;
     }
 
     /** Retourne l'index de la commande juste avant la
         commande actuelle */
-    inline int getPrecedanteCommande()
+    inline int getPositionAnnulation()
     {
 
-        return (positionCommandeCourante + MAX_COMMANDES-1)
-         % MAX_COMMANDES;
+        return (positionCommandeCourante + maxCommandes - niveauAnnulation)
+         % maxCommandes;
     }
 protected:
 //----------------------------------------------------- Attributs protégés
@@ -121,7 +122,7 @@ private:
     la fin de celui-ci, on reboucle au début.
     positionCommandeCourante et positionCommandeValide
     permettent d'indexer ce tableau. La taille max
-    de ce tableau est MAX_COMMANDES */
+    de ce tableau est maxCommandes */
     Commande** listeCommandes;
 
     /** Position dans la liste de la dernière commande exécutée */ 
@@ -130,7 +131,11 @@ private:
     /** Position dans la liste de la dernière commande qui peut 
     être exécutée (notamment lors de l'ajout d'une nouvelle commande
     ou lors d'un Undo/Redo*/
-    unsigned int positionCommandeValide;
+    unsigned int niveauAnnulation;
+
+    /** Le nombre maximal de commandes à un instant donnée dans la
+    liste des commandes */
+    unsigned int maxCommandes;
 
 //---------------------------------------------------------- Classes amies
 

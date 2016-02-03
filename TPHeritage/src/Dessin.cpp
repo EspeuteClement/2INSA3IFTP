@@ -10,8 +10,7 @@
 //---------------------------------------------------------------- INCLUDE
 
 //-------------------------------------------------------- Include système
-using namespace std;
-//#include <iostream>
+#include <iostream>
 //#include <unordered_map>
 #include <string>
 
@@ -38,47 +37,66 @@ using namespace std;
 
 bool Dessin::AjouterObjet(Objet* unObjet)
 {
+#ifdef DEBUG
+	cout << "#Dessin.AjouterObjet" << endl;
+#endif
 	string nom = unObjet->getNom();
-	ListeIterateur trouver = ListeObjets.find(nom);
+	ListeIterateur trouver = ListeObjets->find(nom);
 
 	/* Si l'objet existe déjà, on renvoie false*/
-	if (trouver != ListeObjets.end())
+	if (trouver != ListeObjets->end())
 	{
 		return false;
 	}
 
-	ListeObjets[nom] = unObjet;
+	(*ListeObjets)[nom] = unObjet;
 	return true;
 }
 
-bool Dessin::SupprimerObjet(string nom)
+Objet* Dessin::SupprimerObjet(string nom)
 {
-	ListeIterateur trouver = ListeObjets.find(nom);
+	Objet* obj = getObjet(nom);
+	#ifdef DEBUG
+	cout << "#Dessin.SupprimerObjet " << (void*) obj << endl;
+	#endif
+	//ListeIterateur trouver = ListeObjets.find(nom);
+
+	
 
 	/** Si l'objet n'existe pas, on renvoie false */
-	if (trouver == ListeObjets.end())
+	if (obj == NULL)
 	{
-		return false;
+		cout <<"#Objet null" <<endl;
+		return NULL;
 	}
+	ListeObjets->erase(nom);
+	#ifdef DEBUG
+	cout << "#Dessin.SupprimerObjet after erase " << (void*) obj << endl;
+	#endif
+	return obj;
 
-	ListeObjets.erase(nom);
-	return true;
 }
 
-void Dessin::Enumere(ostream sortie)
+void Dessin::Enumere(ostream& sortie)
 {
-	for(ListeIterateur iterateur = ListeObjets.begin();
-		iterateur != ListeObjets.end();
+#ifdef DEBUG
+	cout << "#Dessin.Enumere" << endl;
+#endif
+	for(ListeIterateur iterateur = ListeObjets->begin();
+		iterateur != ListeObjets->end();
 		iterateur ++)
 	{
 		sortie << iterateur->second->Description() << endl;
 	}
 }
 
-void Dessin::Sauver(ostream sortie)
+void Dessin::Sauver(ostream& sortie)
 {
-	for(ListeIterateur iterateur = ListeObjets.begin();
-	iterateur != ListeObjets.end();iterateur ++)
+#ifdef DEBUG
+	cout << "#Dessin.Sauver" << endl;
+#endif
+	for(ListeIterateur iterateur = ListeObjets->begin();
+	iterateur != ListeObjets->end();iterateur ++)
 	{
 		sortie << iterateur->second->CommandeReconstruire() << endl;
 	}
@@ -109,7 +127,7 @@ Dessin::Dessin ( )
 // Algorithme :
 //
 {
-	ListeObjets = unordered_map<KEY_VALUE_LISTE>();
+	ListeObjets = new unordered_map<KEY_VALUE_LISTE>();
 #ifdef MAP
     cout << "Appel au constructeur de <Dessin>" << endl;
 #endif
@@ -123,6 +141,13 @@ Dessin::~Dessin ( )
 #ifdef MAP
     cout << "Appel au destructeur de <Dessin>" << endl;
 #endif
+    for(ListeIterateur iterateur = ListeObjets->begin();
+		iterateur != ListeObjets->end();
+		iterateur ++)
+	{
+		delete iterateur->second;
+	}
+	delete ListeObjets;
 } //----- Fin de ~Dessin
 
 

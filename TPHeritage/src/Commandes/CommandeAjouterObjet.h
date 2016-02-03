@@ -1,60 +1,60 @@
 /*************************************************************************
-                           Commande  -  description
+                           CommandeAjouterObjet  -  description
                              -------------------
     début                : 17/01/2016
     copyright            : (C) 2016 par cespeute
 *************************************************************************/
 
-//---------- Interface de la classe <Commande> (fichier Commande.h) ------
-#if ! defined ( _COMMANDE_H )
-#define _COMMANDE_H
+//---------- Interface de la classe <CommandeAjouterObjet> (fichier CommandeAjouterObjet.h) ------
+#if ! defined ( _COMMANDE_AJOUTER_OBJET_H )
+#define _COMMANDE_AJOUTER_OBJET_H
 
 //--------------------------------------------------- Interfaces utilisées
-#include "Dessin.h"
-
+#include "../Commande.h"
+#include "../Objet.h"
 //------------------------------------------------------------- Constantes 
 
 //------------------------------------------------------------------ Types 
 
 //------------------------------------------------------------------------ 
-// Rôle de la classe <Commande>
+// Rôle de la classe <CommandeAjouterObjet>
 // Implémente le Command pattern. 
-// Permet de représenter concrètement un appel de commande, et de pouvoir
+// Permet de représenter concrètement un appel de CommandeAjouterObjet, et de pouvoir
 // l'annuler.
 //------------------------------------------------------------------------ 
 
-class Commande
+class CommandeAjouterObjet : public Commande
 {
 //----------------------------------------------------------------- PUBLIC
 
 public:
 //----------------------------------------------------- Méthodes publiques
-    /** Execute la commande
+    /** Execute la CommandeAjouterObjet
     *   
-    *   @return <em>true</em> si la commande s'est bien exécuté, 
+    *   @return <em>true</em> si la CommandeAjouterObjet s'est bien exécuté, 
     *   <em>false</em> si elle à échouée.
     */
-    virtual bool Executer() = 0;
+    bool Executer();
 
-    /** Annule la commande
+    /** Annule la CommandeAjouterObjet
     */
-    virtual void Annuler() = 0;
+    void Annuler();
 
 //-------------------------------------------- Constructeurs - destructeur
 
-    /** Constructeur de copie d'une commande
+    /** Constructeur de copie d'une CommandeAjouterObjet
     *   
-    *   @param uneCommande la commande à copier
+    *   @param uneCommandeAjouterObjet la CommandeAjouterObjet à copier
     */
-    Commande ( const Commande & uneCommande );
+    CommandeAjouterObjet ( const CommandeAjouterObjet & uneCommandeAjouterObjet );
 
-    /** Constructeur de la commande
+    /** Constructeur de la CommandeAjouterObjet
     *
-    *   @param dessinHote le Dessin sur lequel on doit effectuer la commande
+    *   @param dessinHote le Dessin sur lequel on doit effectuer la CommandeAjouterObjet
     */
-    Commande ( Dessin* dessinHote );
+    CommandeAjouterObjet ( Dessin* dessinHote, Objet* objetAjouter   );
 
-    virtual ~Commande ( );
+    virtual ~CommandeAjouterObjet ( );
 
 //------------------------------------------------------------------ PRIVE 
 
@@ -66,19 +66,22 @@ private:
 
 protected:
 //----------------------------------------------------- Attributs protégés
-    /* Le Dessin sur lequel les commandes doivent être effectuées*/
-    Dessin* dessinHote;
+
 private:
 //------------------------------------------------------- Attributs privés
-    
+    /* L'objet crée par la commande*/
+    Objet* objet;
+
+    /* Si la commande a été annulée*/
+    bool estAnnule;
 //---------------------------------------------------------- Classes amies
 
 //-------------------------------------------------------- Classes privées
 
 //----------------------------------------------------------- Types privés
-
+    typedef Commande super;
 };
 
-//----------------------------------------- Types dépendants de <Commande>
+//----------------------------------------- Types dépendants de <CommandeAjouterObjet>
 
-#endif // _COMMANDE_H
+#endif // _CommandeAjouterObjet_AJOUTER_OBJET_H

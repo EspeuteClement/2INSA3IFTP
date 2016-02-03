@@ -1,0 +1,9 @@
+S a 0 0 0 0
+S b 0 0 0 0
+S c 0 0 0 0
+LIST
+DELETE a b c
+LIST
+UNDO
+LIST
+EXIT

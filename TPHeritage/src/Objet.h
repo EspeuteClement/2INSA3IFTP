@@ -73,9 +73,9 @@ public:
 	 *
 	 *@param unNom le nom fourni pour l'objet
 	 */
-    Objet (std::string unNom ):nom(unNom){}
+    Objet (std::string unNom ):nom(unNom){};
 
-    virtual ~Objet ( );
+    virtual ~Objet ( ) {};
     // Mode d'emploi :
     //
     // Contrat :

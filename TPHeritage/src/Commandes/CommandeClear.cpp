@@ -1,21 +1,20 @@
 /*************************************************************************
-                           Commande  -  description
+                           CommandeClear  -  description
                              -------------------
     début                : 17/01/2016
     copyright            : (C) 2016 par cespeute
 *************************************************************************/
 
-//---------- Réalisation de la classe <Commande> (fichier Commande.cpp) --
+//---------- Réalisation de la classe <CommandeClear> (fichier CommandeClear.cpp) --
 
 //---------------------------------------------------------------- INCLUDE
 
 //-------------------------------------------------------- Include système
-using namespace std;
+
 #include <iostream>
-
+using namespace std;
 //------------------------------------------------------ Include personnel
-#include "Commande.h"
-
+#include "CommandeClear.h"
 //------------------------------------------------------------- Constantes
 
 //---------------------------------------------------- Variables de classe
@@ -27,7 +26,23 @@ using namespace std;
 //-------------------------------------------------------- Fonctions amies
 
 //----------------------------------------------------- Méthodes publiques
+bool CommandeClear::Executer()
+{
+#ifdef DEBUG
+	cout << "#Appel de CommandeClear" << endl;
+#endif
+    unordered_map<KEY_VALUE_LISTE>* tampon = listeSupprime;
+    listeSupprime = dessinHote->ListeObjets;
+    dessinHote->ListeObjets = tampon;
 
+    return true;
+}
+
+void CommandeClear::Annuler()
+{
+    // L'opération est identique à l'exécution
+	Executer();
+}
 //------------------------------------------------- Surcharge d'opérateurs
 
 
@@ -35,24 +50,34 @@ using namespace std;
 
 
 
-Commande::Commande (Dessin* dessinHote)  : dessinHote(dessinHote)
+CommandeClear::CommandeClear (Dessin* dessinHote) : 
+	super(dessinHote),
+    listeSupprime(NULL)
 // Algorithme :
 //
 {
 #ifdef MAP
-    cout << "Appel au constructeur de <Commande>" << endl;
-#endif
-} //----- Fin de Commande
+    cout << "Appel au constructeur de <CommandeClear>" << endl;
+#endif	
+    listeSupprime = new unordered_map<KEY_VALUE_LISTE>();
+} //----- Fin de CommandeClear
 
 
-Commande::~Commande ()
+CommandeClear::~CommandeClear ()
 // Algorithme :
 //
 {
 #ifdef MAP
-    cout << "Appel au destructeur de <Commande>" << endl;
+    cout << "Appel au destructeur de <CommandeClear>" << endl;
 #endif
-} //----- Fin de ~Commande
+    for(Dessin::ListeIterateur iterateur = listeSupprime->begin();
+        iterateur != listeSupprime->end();
+        iterateur ++)
+    {
+        delete iterateur->second;
+    }
+    delete listeSupprime;
+} //----- Fin de ~CommandeClear
 
 
 //------------------------------------------------------------------ PRIVE

@@ -1,60 +1,62 @@
 /*************************************************************************
-                           Commande  -  description
+                           CommandeSupprimerObjet  -  description
                              -------------------
     début                : 17/01/2016
     copyright            : (C) 2016 par cespeute
 *************************************************************************/
 
-//---------- Interface de la classe <Commande> (fichier Commande.h) ------
-#if ! defined ( _COMMANDE_H )
-#define _COMMANDE_H
+//---------- Interface de la classe <CommandeSupprimerObjet> (fichier CommandeSupprimerObjet.h) ------
+#if ! defined ( _COMMANDE_SUPPRIMER_OBJET_H_ )
+#define _COMMANDE_SUPPRIMER_OBJET_H_
 
 //--------------------------------------------------- Interfaces utilisées
-#include "Dessin.h"
-
+#include "../Commande.h"
+#include "../Objet.h"
+#include <string>
+using namespace std;
 //------------------------------------------------------------- Constantes 
 
 //------------------------------------------------------------------ Types 
 
 //------------------------------------------------------------------------ 
-// Rôle de la classe <Commande>
+// Rôle de la classe <CommandeSupprimerObjet>
 // Implémente le Command pattern. 
-// Permet de représenter concrètement un appel de commande, et de pouvoir
+// Permet de représenter concrètement un appel de CommandeSupprimerObjet, et de pouvoir
 // l'annuler.
 //------------------------------------------------------------------------ 
 
-class Commande
+class CommandeSupprimerObjet : public Commande
 {
 //----------------------------------------------------------------- PUBLIC
 
 public:
 //----------------------------------------------------- Méthodes publiques
-    /** Execute la commande
+    /** Execute la CommandeSupprimerObjet
     *   
-    *   @return <em>true</em> si la commande s'est bien exécuté, 
+    *   @return <em>true</em> si la CommandeSupprimerObjet s'est bien exécuté, 
     *   <em>false</em> si elle à échouée.
     */
-    virtual bool Executer() = 0;
+    bool Executer();
 
-    /** Annule la commande
+    /** Annule la CommandeSupprimerObjet
     */
-    virtual void Annuler() = 0;
+    void Annuler();
 
 //-------------------------------------------- Constructeurs - destructeur
 
-    /** Constructeur de copie d'une commande
+    /** Constructeur de copie d'une CommandeSupprimerObjet
     *   
-    *   @param uneCommande la commande à copier
+    *   @param uneCommandeSupprimerObjet la CommandeSupprimerObjet à copier
     */
-    Commande ( const Commande & uneCommande );
+    CommandeSupprimerObjet ( const CommandeSupprimerObjet & uneCommandeSupprimerObjet );
 
-    /** Constructeur de la commande
+    /** Constructeur de la CommandeSupprimerObjet
     *
-    *   @param dessinHote le Dessin sur lequel on doit effectuer la commande
+    *   @param dessinHote le Dessin sur lequel on doit effectuer la CommandeSupprimerObjet
     */
-    Commande ( Dessin* dessinHote );
+    CommandeSupprimerObjet ( Dessin* dessinHote, const vector<string> nomsObjet);
 
-    virtual ~Commande ( );
+    virtual ~CommandeSupprimerObjet ( );
 
 //------------------------------------------------------------------ PRIVE 
 
@@ -66,19 +68,25 @@ private:
 
 protected:
 //----------------------------------------------------- Attributs protégés
-    /* Le Dessin sur lequel les commandes doivent être effectuées*/
-    Dessin* dessinHote;
+
 private:
 //------------------------------------------------------- Attributs privés
-    
+    /* L'objet crée par la commande*/
+    vector<string> nomsObjet;
+
+    /* L'objet supprimé */
+    vector<Objet*> objetsSupprime;
+
+    /* Si l'objet est bien supprimé */
+    bool estSupprime;
 //---------------------------------------------------------- Classes amies
 
 //-------------------------------------------------------- Classes privées
 
 //----------------------------------------------------------- Types privés
-
+    typedef Commande super;
 };
 
-//----------------------------------------- Types dépendants de <Commande>
+//----------------------------------------- Types dépendants de <CommandeSupprimerObjet>
 
-#endif // _COMMANDE_H
+#endif // _CommandeSupprimerObjet_AJOUTER_OBJET_H

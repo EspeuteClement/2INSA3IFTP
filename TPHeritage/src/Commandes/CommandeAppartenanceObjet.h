@@ -1,60 +1,63 @@
 /*************************************************************************
-                           Commande  -  description
+                           CommandeAppartenanceObjet  -  description
                              -------------------
     début                : 17/01/2016
     copyright            : (C) 2016 par cespeute
 *************************************************************************/
 
-//---------- Interface de la classe <Commande> (fichier Commande.h) ------
-#if ! defined ( _COMMANDE_H )
-#define _COMMANDE_H
+//---------- Interface de la classe <CommandeAppartenanceObjet> (fichier CommandeAppartenanceObjet.h) ------
+#if ! defined ( _COMMANDE_APPARTENANCE_OBJET_H_ )
+#define _COMMANDE_APPARTENANCE_OBJET_H_
 
 //--------------------------------------------------- Interfaces utilisées
-#include "Dessin.h"
-
+#include "../Commande.h"
+#include "../Objet.h"
+#include "../Point.h"
+#include <string>
+using namespace std;
 //------------------------------------------------------------- Constantes 
 
 //------------------------------------------------------------------ Types 
 
 //------------------------------------------------------------------------ 
-// Rôle de la classe <Commande>
+// Rôle de la classe <CommandeAppartenanceObjet>
 // Implémente le Command pattern. 
-// Permet de représenter concrètement un appel de commande, et de pouvoir
+// Permet de représenter concrètement un appel de CommandeAppartenanceObjet, et de pouvoir
 // l'annuler.
 //------------------------------------------------------------------------ 
 
-class Commande
+class CommandeAppartenanceObjet : public Commande
 {
 //----------------------------------------------------------------- PUBLIC
 
 public:
 //----------------------------------------------------- Méthodes publiques
-    /** Execute la commande
+    /** Execute la CommandeAppartenanceObjet
     *   
-    *   @return <em>true</em> si la commande s'est bien exécuté, 
+    *   @return <em>true</em> si la CommandeAppartenanceObjet s'est bien exécuté, 
     *   <em>false</em> si elle à échouée.
     */
-    virtual bool Executer() = 0;
+    bool Executer();
 
-    /** Annule la commande
+    /** Annule la CommandeAppartenanceObjet
     */
-    virtual void Annuler() = 0;
+    void Annuler();
 
 //-------------------------------------------- Constructeurs - destructeur
 
-    /** Constructeur de copie d'une commande
+    /** Constructeur de copie d'une CommandeAppartenanceObjet
     *   
-    *   @param uneCommande la commande à copier
+    *   @param uneCommandeAppartenanceObjet la CommandeAppartenanceObjet à copier
     */
-    Commande ( const Commande & uneCommande );
+    CommandeAppartenanceObjet ( const CommandeAppartenanceObjet & uneCommandeAppartenanceObjet );
 
-    /** Constructeur de la commande
+    /** Constructeur de la CommandeAppartenanceObjet
     *
-    *   @param dessinHote le Dessin sur lequel on doit effectuer la commande
+    *   @param dessinHote le Dessin sur lequel on doit effectuer la CommandeAppartenanceObjet
     */
-    Commande ( Dessin* dessinHote );
+    CommandeAppartenanceObjet ( Dessin* dessinHote, const string nomObjet, Point lePoint );
 
-    virtual ~Commande ( );
+    virtual ~CommandeAppartenanceObjet ( );
 
 //------------------------------------------------------------------ PRIVE 
 
@@ -66,19 +69,20 @@ private:
 
 protected:
 //----------------------------------------------------- Attributs protégés
-    /* Le Dessin sur lequel les commandes doivent être effectuées*/
-    Dessin* dessinHote;
+
 private:
 //------------------------------------------------------- Attributs privés
-    
+    /* L'objet de la commande*/
+    string nomObjet;
+    Point lePoint;
 //---------------------------------------------------------- Classes amies
 
 //-------------------------------------------------------- Classes privées
 
 //----------------------------------------------------------- Types privés
-
+    typedef Commande super;
 };
 
-//----------------------------------------- Types dépendants de <Commande>
+//----------------------------------------- Types dépendants de <CommandeAppartenanceObjet>
 
-#endif // _COMMANDE_H
+#endif // _CommandeAppartenanceObjet_AJOUTER_OBJET_H

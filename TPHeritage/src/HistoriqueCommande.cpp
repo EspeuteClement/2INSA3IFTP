@@ -19,7 +19,7 @@ using namespace std;
 #include "HistoriqueCommande.h"
 
 //------------------------------------------------------------- Constantes
-const unsigned int HistoriqueCommande::MAX_COMMANDES = 30;
+
 //---------------------------------------------------- Variables de classe
 
 //----------------------------------------------------------- Types privés
@@ -37,42 +37,61 @@ const unsigned int HistoriqueCommande::MAX_COMMANDES = 30;
 
 bool HistoriqueCommande::AjouterCommande(Commande *laCommande)
 {
-	positionCommandeCourante = getProchaineCommande();
-	// Supprimer la commande qui occupe la liste
-	if (listeCommandes[positionCommandeCourante] != NULL)
+	if (laCommande != NULL)
 	{
-		delete listeCommandes[positionCommandeCourante];
+		// On execute la commande, et on l'ajoute à la liste
+		//de l'historique si elle renvoie true
+		if (laCommande->Executer())
+		{
+			// Supprimer la commande qui occupe la liste
+			positionCommandeCourante = getProchaineCommande();
+			if (listeCommandes[positionCommandeCourante] != NULL)
+			{
+				delete listeCommandes[positionCommandeCourante];
+			}
+			listeCommandes[positionCommandeCourante] = laCommande;
+			niveauAnnulation = 0;
+			return true;
+		}
+		// Si la commande a échouée, on la delete
+		delete laCommande;
 	}
-	listeCommandes[positionCommandeCourante] = laCommande;
-	laCommande->Executer();
-	positionCommandeValide = positionCommandeCourante;
-
-	return true;
+	return false;
 }
 
 bool HistoriqueCommande::AnnulerCommande()
 {
-	int precedanteCommande = getPrecedanteCommande();
+	int precedanteCommande = getPositionAnnulation();
 	// Si on n'a pas rebouclé dans le tableau (donc qu'on
-	// n'a pas atteint la positionCommandeValide) et que
+	// n'a pas atteint un niveau d'annulation >= maxCommandes) et que
 	// il y a bien une commande à annuler ...
-	if (precedanteCommande != positionCommandeValide
+	if (niveauAnnulation < maxCommandes
 		&& listeCommandes[precedanteCommande] != NULL)
 	{
+		std::cout.setstate(std::ios_base::failbit);
 		listeCommandes[precedanteCommande]->Annuler();
-		positionCommandeCourante = precedanteCommande;
+		std::cout.clear();
+		niveauAnnulation ++;
+		std::cout << "OK" << std::endl;
 		return true;
 	}
+	std::cout << "ERR" << std::endl;
 	return false;
 }
 
 bool HistoriqueCommande::ReprendreCommande()
 {
-	if (positionCommandeCourante != positionCommandeValide)
+	if (niveauAnnulation > 0)
 	{
-		positionCommandeCourante = getProchaineCommande();
-		listeCommandes[positionCommandeCourante]->Executer();
+		niveauAnnulation --;
+		std::cout.setstate(std::ios_base::failbit);
+		listeCommandes[getPositionAnnulation()]->Executer();
+		std::cout.clear();
+
+		std::cout << "OK" << std::endl;
+		return true;
 	}
+	std::cout << "ERR" << std::endl;
 	return false;
 }
 
@@ -95,13 +114,16 @@ HistoriqueCommande::HistoriqueCommande ( const HistoriqueCommande & unHistorique
 } //----- Fin de HistoriqueCommande (constructeur de copie)
 
 
-HistoriqueCommande::HistoriqueCommande ( )
+HistoriqueCommande::HistoriqueCommande (int nombreCommandes) :
+	positionCommandeCourante(0),
+	niveauAnnulation(0),
+	maxCommandes(nombreCommandes)
 // Algorithme :
 //
 {
-	listeCommandes = new Commande*[MAX_COMMANDES];
+	listeCommandes = new Commande*[maxCommandes];
 	for (unsigned int positionHistorique = 0; 
-			positionHistorique < MAX_COMMANDES;
+			positionHistorique < maxCommandes;
 			positionHistorique ++)
 	{
 		listeCommandes[positionHistorique] = NULL;
@@ -117,7 +139,7 @@ HistoriqueCommande::~HistoriqueCommande ( )
 	// On itère à travers la liste des commandes et on
 	// supprime chaque commande une par une
 	for(int positionHistorique = 0; 
-		positionHistorique < MAX_COMMANDES ;
+		positionHistorique < maxCommandes ;
 		positionHistorique ++)
 	{
 		if (listeCommandes[positionHistorique] != NULL)

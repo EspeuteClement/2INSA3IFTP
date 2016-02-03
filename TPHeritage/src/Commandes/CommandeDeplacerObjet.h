@@ -1,60 +1,65 @@
 /*************************************************************************
-                           Commande  -  description
+                           CommandeDeplacerObjet  -  description
                              -------------------
     début                : 17/01/2016
     copyright            : (C) 2016 par cespeute
 *************************************************************************/
 
-//---------- Interface de la classe <Commande> (fichier Commande.h) ------
-#if ! defined ( _COMMANDE_H )
-#define _COMMANDE_H
+//---------- Interface de la classe <CommandeDeplacerObjet> (fichier CommandeDeplacerObjet.h) ------
+#if ! defined ( _COMMANDE_DEPLACER_OBJET_H_ )
+#define _COMMANDE_DEPLACER_OBJET_H_
 
 //--------------------------------------------------- Interfaces utilisées
-#include "Dessin.h"
-
+#include "../Commande.h"
+#include "../Objet.h"
+#include <string>
+using namespace std;
 //------------------------------------------------------------- Constantes 
 
 //------------------------------------------------------------------ Types 
 
 //------------------------------------------------------------------------ 
-// Rôle de la classe <Commande>
+// Rôle de la classe <CommandeDeplacerObjet>
 // Implémente le Command pattern. 
-// Permet de représenter concrètement un appel de commande, et de pouvoir
+// Permet de représenter concrètement un appel de CommandeDeplacerObjet, et de pouvoir
 // l'annuler.
 //------------------------------------------------------------------------ 
 
-class Commande
+class CommandeDeplacerObjet : public Commande
 {
 //----------------------------------------------------------------- PUBLIC
 
 public:
 //----------------------------------------------------- Méthodes publiques
-    /** Execute la commande
+    /** Execute la CommandeDeplacerObjet
     *   
-    *   @return <em>true</em> si la commande s'est bien exécuté, 
+    *   @return <em>true</em> si la CommandeDeplacerObjet s'est bien exécuté, 
     *   <em>false</em> si elle à échouée.
     */
-    virtual bool Executer() = 0;
+    bool Executer();
 
-    /** Annule la commande
+    /** Annule la CommandeDeplacerObjet
     */
-    virtual void Annuler() = 0;
+    void Annuler();
 
 //-------------------------------------------- Constructeurs - destructeur
 
-    /** Constructeur de copie d'une commande
+    /** Constructeur de copie d'une CommandeDeplacerObjet
     *   
-    *   @param uneCommande la commande à copier
+    *   @param uneCommandeDeplacerObjet la CommandeDeplacerObjet à copier
     */
-    Commande ( const Commande & uneCommande );
+    CommandeDeplacerObjet ( const CommandeDeplacerObjet & uneCommandeDeplacerObjet );
 
-    /** Constructeur de la commande
+    /** Constructeur de la CommandeDeplacerObjet
     *
-    *   @param dessinHote le Dessin sur lequel on doit effectuer la commande
+    *   @param dessinHote le Dessin sur lequel on doit effectuer la CommandeDeplacerObjet
+    *   @param nomObjet le nom de l'objet à déplacer
+    *   @param dx le déplacement sur l'axe x de l'objet
+    *   @param dy le déplacement sur l'axe y de l'objet
     */
-    Commande ( Dessin* dessinHote );
+    CommandeDeplacerObjet ( Dessin* dessinHote, const string nomObjet, long dx, long dy);
 
-    virtual ~Commande ( );
+    virtual ~CommandeDeplacerObjet ( );
 
 //------------------------------------------------------------------ PRIVE 
 
@@ -66,19 +71,26 @@ private:
 
 protected:
 //----------------------------------------------------- Attributs protégés
-    /* Le Dessin sur lequel les commandes doivent être effectuées*/
-    Dessin* dessinHote;
+
 private:
 //------------------------------------------------------- Attributs privés
-    
+    /* L'objet crée par la commande*/
+    string nomObjet;
+
+    /* L'objet supprimé */
+    Objet* objetDeplace;
+
+    long dx;
+    long dy;
+
 //---------------------------------------------------------- Classes amies
 
 //-------------------------------------------------------- Classes privées
 
 //----------------------------------------------------------- Types privés
-
+    typedef Commande super;
 };
 
-//----------------------------------------- Types dépendants de <Commande>
+//----------------------------------------- Types dépendants de <CommandeDeplacerObjet>
 
-#endif // _COMMANDE_H
+#endif // _CommandeDeplacerObjet_AJOUTER_OBJET_H
