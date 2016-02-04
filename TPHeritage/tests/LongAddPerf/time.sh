@@ -1,5 +1,5 @@
 rm results
-exe=../../bin/CommandeTestDessin
+exe=../../bin/Dessinator
 for i in in*
 do
 	echo "-----------"

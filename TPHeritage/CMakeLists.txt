@@ -23,7 +23,7 @@ add_executable(
 
 
 target_compile_features(Dessinator PRIVATE cxx_range_for)
-
+set(CMAKE_CXX_FLAGS "-O3")
 
 
 #add_definitions(-DDEBUG)
