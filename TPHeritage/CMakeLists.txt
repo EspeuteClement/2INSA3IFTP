@@ -16,15 +16,13 @@ include_directories("${PROJECT_SOURCE_DIR}")
 
 
 add_executable(
-	CommandeTestDessin ${SOURCES} src/TestDessin/TestDessin.cpp
+	Dessinator ${SOURCES} src/main.cpp
 )
-
-
 
 #Configuration de l'édition de liens
 
 
-target_compile_features(CommandeTestDessin PRIVATE cxx_range_for)
+target_compile_features(Dessinator PRIVATE cxx_range_for)
 
 
 

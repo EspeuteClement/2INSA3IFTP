@@ -1,4 +1,4 @@
-exe=../bin/CommandeTestDessin
+exe=../bin/Dessinator
 nOk=0
 nKo=0
 nTotal=0
