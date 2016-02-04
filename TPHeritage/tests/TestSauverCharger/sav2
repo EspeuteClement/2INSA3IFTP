@@ -1,0 +1,16 @@
+S copiercopiera 0 0 0 0
+S copiercopierb 1 1 1 1
+OR copierr1 copiercopiera copiercopierb
+DELETE copiercopiera copiercopierb 
+S copiercopierc 0 0 0 0
+OR copierr2 copiercopierc
+DELETE copiercopierc 
+OI r3 copierr1 copierr2
+DELETE copierr1 copierr2 
+S copierc 0 0 0 0
+OR r2 copierc
+DELETE copierc 
+S copiera 0 0 0 0
+S copierb 1 1 1 1
+OR r1 copiera copierb
+DELETE copiera copierb 

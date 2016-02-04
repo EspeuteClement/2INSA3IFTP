@@ -4,3 +4,7 @@ UNDO
 LIST
 REDO
 LIST
+HIT a 0 0
+HIT b 0 0
+HIT c 0 0
+HIT d 0 0

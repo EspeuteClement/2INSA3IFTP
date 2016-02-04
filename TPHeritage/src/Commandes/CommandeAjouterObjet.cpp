@@ -33,13 +33,6 @@ bool CommandeAjouterObjet::Executer()
 #endif
 	bool estValide =  dessinHote->AjouterObjet(objet);
     if (estValide)
-    {
-        cout << "OK" << endl;
-    }
-    else
-    {
-        cout << "ERR" << endl;
-    }
 	estAnnule = !estValide;
 	return estValide;
 }

@@ -1,0 +1,14 @@
+R r1 0 0 3 3
+R r2 1 1 4 4
+HIT r1 2 3
+HIT r1 3 2
+HIT r2 2 3
+HIT r2 3 2
+OI int r1 r2
+HIT int 0 0
+HIT int 4 4
+HIT int 2 2
+HIT int 3 3
+HIT int 2 3
+HIT int 3 2
+EXIT

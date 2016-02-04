@@ -34,13 +34,16 @@ bool CommandeAppartenanceObjet::Executer()
 	cout << "#" << static_cast<void*>(obj) << endl;
 #endif
 	
-
 	if (obj && obj->EstDedans(lePoint))
 	{
 		cout << "YES" << endl;
 	}
 	else
 	{
+		if(!obj)
+		{
+			cout << "#L'objet n'existe pas" << endl;
+		}
 		cout << "NO" << endl;
 	}
 

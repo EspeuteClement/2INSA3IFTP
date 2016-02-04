@@ -8,6 +8,7 @@
 #include "../Commandes/CommandeSupprimerObjet.h"
 #include "../Commandes/CommandeAppartenanceObjet.h"
 #include "../Commandes/CommandeClear.h"
+#include "../Commandes/CommandeSauver.h"
 #include "../GestionEntreSortie.h"
 
 #include <iostream>
@@ -30,16 +31,46 @@ int main()
 			switch (retour.valeur)
 			{
 				case GestionEntreSortie::OK:
-					historique->AjouterCommande(retour.commande);
+					if(historique->AjouterCommande(retour.commande))
+					{
+						cout << "OK" << endl;
+					}
+					else
+					{
+						cout << "ERR" << endl;
+					}
 				break;
+				case GestionEntreSortie::HIT:
+					historique->AjouterCommande(retour.commande);
+					break;
+				case GestionEntreSortie::SAVE:
+					historique->AjouterCommande(retour.commande);
+					break;
 				case GestionEntreSortie::UNDO:
-					historique->AnnulerCommande();
+					if(historique->AnnulerCommande())
+					{
+						cout << "OK" << endl;
+					}
+					else
+					{
+						cout << "ERR" << endl;
+					}
 				break;
 				case GestionEntreSortie::REDO:
-					historique->ReprendreCommande();
+					if(historique->ReprendreCommande())
+					{
+						cout << "OK" << endl;
+					}
+					else
+					{
+						cout << "ERR" << endl;
+					}
 				break;
 				case GestionEntreSortie::LIST:
 					des->Enumere(cout);
+				break;
+				case GestionEntreSortie::ERR_PARAM:
+					cout << "ERR" <<endl;
 				break;
 			}
 		}

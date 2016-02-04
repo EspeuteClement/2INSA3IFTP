@@ -68,14 +68,12 @@ bool HistoriqueCommande::AnnulerCommande()
 	if (niveauAnnulation < maxCommandes
 		&& listeCommandes[precedanteCommande] != NULL)
 	{
-		std::cout.setstate(std::ios_base::failbit);
+		
 		listeCommandes[precedanteCommande]->Annuler();
-		std::cout.clear();
+		
 		niveauAnnulation ++;
-		std::cout << "OK" << std::endl;
 		return true;
 	}
-	std::cout << "ERR" << std::endl;
 	return false;
 }
 
@@ -84,14 +82,12 @@ bool HistoriqueCommande::ReprendreCommande()
 	if (niveauAnnulation > 0)
 	{
 		niveauAnnulation --;
-		std::cout.setstate(std::ios_base::failbit);
+		
 		listeCommandes[getPositionAnnulation()]->Executer();
-		std::cout.clear();
+		
 
-		std::cout << "OK" << std::endl;
 		return true;
 	}
-	std::cout << "ERR" << std::endl;
 	return false;
 }
 

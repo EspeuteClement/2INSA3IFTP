@@ -1,0 +1,17 @@
+R r1 0 0 3 3
+R r2 1 1 4 4
+OI int r1 r2
+MOVE int 10 10
+HIT int 0 0
+HIT int 4 4
+HIT int 2 2
+HIT int 3 3
+HIT int 2 3
+HIT int 3 2
+HIT int 10 10
+HIT int 14 14
+HIT int 12 12
+HIT int 13 13
+HIT int 12 13
+HIT int 13 12
+EXIT

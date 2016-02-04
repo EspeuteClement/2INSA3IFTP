@@ -38,11 +38,11 @@ bool CommandeSupprimerObjet::Executer()
         Objet* obj = dessinHote->getObjet(s);
         if (obj == NULL)
         {
-            estSupprime == false;
+            estSupprime = false;
 #ifdef DEBUG
             cout << "#Un des objets n'est pas présent dans le dessin." << endl;
 #endif
-            break;
+            return false;
         }
     }
 
@@ -50,17 +50,12 @@ bool CommandeSupprimerObjet::Executer()
     {
         for (auto& s : nomsObjet)
         {
-            objetsSupprime.push_back(dessinHote->SupprimerObjet(s));
+            Objet* obj = dessinHote->SupprimerObjet(s);
+            if (obj != NULL)
+            {
+                objetsSupprime.push_back(obj);
+            }   
         }
-    }
-
-    if (estSupprime)
-    {
-        cout << "OK" << endl;
-    }
-    else
-    {
-        cout << "ERR" << endl;
     }
     return estSupprime;
 }

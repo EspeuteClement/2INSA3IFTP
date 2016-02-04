@@ -1,0 +1,12 @@
+PC a 0 0 -10 10 0 20 10 10
+HIT a 0 0
+HIT a 10 10
+HIT a 0 20
+HIT a -10 10
+HIT a 0 10
+HIT a 5 15
+HIT a -5 15
+HIT a -5 5
+HIT a 5 5
+HIT a 16 5
+EXIT

@@ -12,7 +12,9 @@ namespace GestionEntreSortie
 	{
 		OK,			// Une Commande a bien pu être crée
 		UNDO,		// On veut faire un UNDO
+		HIT,		//
 		REDO,		// On veut faire un REDO
+		SAVE,		// On veut faire une sauvegarde
 		LIST,		// On veut faire une LIST
 		ERR_PARAM,	// Les paramètres d'une commande sont erronés
 		EXIT		// L'instruction exit a été entrée

@@ -46,31 +46,23 @@ bool CommandeCharger::Executer()
             if (retour.valeur != GestionEntreSortie::OK)
             {
                 // On annule toutes les commandes en cours
-                std::cout.setstate(std::ios_base::failbit);
                 while(historique->AnnulerCommande());
-                std::cout.clear();
 
-                cout << "ERR" << endl;
                 cout << "#Ficher de sauvegarde corrompu" << endl;
                 // Et on quite :D
                 entre->close();
                 return false;
             }
 
-            std::cout.setstate(std::ios_base::failbit);
             bool commandeOK = historique->AjouterCommande(
                 retour.commande
             );
-            std::cout.clear();
             
             if (!commandeOK)
             {
                 // On annule toutes les commandes en cours
-                std::cout.setstate(std::ios_base::failbit);
                 while(historique->AnnulerCommande());
-                std::cout.clear();
 
-                cout << "ERR" << endl;
                 cout << "#Un des objets est déjà présent dans le dessin." << endl;
                 // Et on quite :D
                 entre->close();
@@ -78,11 +70,9 @@ bool CommandeCharger::Executer()
             }
             
         }
-        cout << "OK" << endl;
         entre->close();
         return true; 
     }
-    cout << "ERR" << endl;
     cout << "#Ficher non existant" << endl;
     entre->close();
     return false;

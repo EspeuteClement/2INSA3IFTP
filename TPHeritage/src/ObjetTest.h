@@ -2,13 +2,14 @@
 #define OBJET_TEST_H
 
 #include "Objet.h"
+#include <iostream>
 #include <sstream>
 
 class ObjetTest : public Objet
 {
 public: 
-	bool EstDedans (Point unPoint) {
-		return true;
+	bool EstDedans (const Point &unPoint) {
+		return false;
 	}
 
 	std::string Description ()
@@ -21,7 +22,7 @@ public:
 	std::string CommandeReconstruire()
 	{
 		std::ostringstream retour;
-		retour << "S " << nom << " 0 0 0 0" << std::endl;
+		retour << "S " << nom << " 0 0 0 0";
 		return retour.str();
 	};
 

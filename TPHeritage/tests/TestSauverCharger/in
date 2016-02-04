@@ -1,0 +1,31 @@
+S a 0 0 0 0
+S b 0 0 0 0
+S c 0 0 0 0
+R rec 0 0 10 10
+PC pol 0 0 -5 5 10 10 5 5
+SAVE TestSauverCharger/sav
+CLEAR
+HIT a 0 0
+S d 0 0 0 0
+LOAD TestSauverCharger/sav
+HIT a 0 0
+HIT b 0 0
+HIT c 0 0
+HIT d 0 0
+CLEAR
+S a 0 0 0 0
+S b 1 1 1 1
+OR r1 a b
+S c 0 0 0 0
+OR r2 c
+OI r3 r1 r2
+DELETE a b c
+SAVE TestSauverCharger/sav2
+S a 0 0 0 0
+DELETE r1 r2 r3
+LOAD TestSauverCharger/sav2
+HIT r2 0 0
+HIT r3 0 0
+HIT r3 5 5
+HIT r1 0 0
+EXIT

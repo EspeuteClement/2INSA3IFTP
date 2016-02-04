@@ -86,7 +86,7 @@ void Dessin::Enumere(ostream& sortie)
 		iterateur != ListeObjets->end();
 		iterateur ++)
 	{
-		sortie << iterateur->second->Description() << endl;
+		sortie << iterateur->second->Description();
 	}
 }
 
@@ -98,7 +98,7 @@ void Dessin::Sauver(ostream& sortie)
 	for(ListeIterateur iterateur = ListeObjets->begin();
 	iterateur != ListeObjets->end();iterateur ++)
 	{
-		sortie << iterateur->second->CommandeReconstruire() << endl;
+		sortie << iterateur->second->CommandeReconstruire();
 	}
 }
 

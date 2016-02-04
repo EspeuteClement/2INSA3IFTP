@@ -33,7 +33,8 @@ bool CommandeDeplacerObjet::Executer()
 #endif
     if (objetDeplace != NULL)
     {
-        //return objetDeplace->Deplacer(dx, dy);
+        objetDeplace->Deplacer(dx,dy);
+        return true;
     }
     return false;
 }
@@ -43,7 +44,7 @@ void CommandeDeplacerObjet::Annuler()
 	cout << "#Annulation de CommandeDeplacerObjet" << endl;
 	if (objetDeplace != NULL)
     {
-        //objetDeplace->Deplacer(-dx, -dy);
+        objetDeplace->Deplacer(-dx,-dy);
     }
 }
 //------------------------------------------------- Surcharge d'opérateurs
@@ -56,7 +57,9 @@ void CommandeDeplacerObjet::Annuler()
 CommandeDeplacerObjet::CommandeDeplacerObjet (Dessin* dessinHote,
 											     string nomObjet, long dx, long dy) : 
 	super(dessinHote),
-	nomObjet(nomObjet)
+	nomObjet(nomObjet),
+    dx(dx),
+    dy(dy)
 // Algorithme :
 //
 {

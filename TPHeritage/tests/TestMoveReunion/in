@@ -1,0 +1,11 @@
+S a 0 0 0 0
+S b 1 1 1 1
+OR r a b
+MOVE r 10 10
+HIT a 0 0
+HIT b 1 1
+HIT r 0 0
+HIT r 1 1
+HIT r 10 10
+HIT r 11 11
+EXIT

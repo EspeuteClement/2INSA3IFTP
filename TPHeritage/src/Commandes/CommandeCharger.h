@@ -6,8 +6,8 @@
 *************************************************************************/
 
 //---------- Interface de la classe <CommandeCharger> (fichier CommandeCharger.h) ------
-#if ! defined ( _COMMANDE_SAUVER_H_ )
-#define _COMMANDE_SAUVER_H_
+#if ! defined ( _COMMANDE_CHARGER_H_ )
+#define _COMMANDE_CHARGER_H_
 
 //--------------------------------------------------- Interfaces utilisées
 #include "../Commande.h"

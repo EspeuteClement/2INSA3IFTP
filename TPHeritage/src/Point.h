@@ -40,23 +40,26 @@ public:
     	y+=dy;
     }
 
-	int getX ()
+	/**Retourner la valeur de x du point
+     *
+     * @return la valeur de x retournee
+     */
+	int getX () const
 	{
 		return x;
 	}
 
-	int getY ()
+	/**Retourner la valeur de y du point
+     *
+     * @return la valeur de y retournee
+     */
+	int getY () const
 	{
 		return y;
 	}
 
 
 //------------------------------------------------- Surcharge d'opérateurs
-    Point & operator = ( const Point & unPoint );
-    // Mode d'emploi :
-    //
-    // Contrat :
-    //
 
 
 //-------------------------------------------- Constructeurs - destructeur
@@ -66,11 +69,7 @@ public:
      *@param unX la coordonnee du point sur l'axe x
      *@param unY la coordonnee du point sur l'axe y
      */
-    Point ( const Point & unPoint )
-    {
-        this->x = unPoint.x;
-        this->y = unPoint.y;
-    }
+    Point ( const Point & unPoint ):x(unPoint.x), y(unPoint.y){}
 
 
     /**Creer un point avec ses coordonnees
@@ -78,14 +77,10 @@ public:
      *@param unX la coordonnee du point sur l'axe x
      *@param unY la coordonnee du point sur l'axe y
      */
-    Point (int unX, int unY):x(unX), y(unY){};
+    Point (int unX, int unY):x(unX), y(unY){}
 
 
-    virtual ~Point ( ) {};
-    // Mode d'emploi :
-    //
-    // Contrat :
-    //
+    virtual ~Point ( ){};
 
 //------------------------------------------------------------------ PRIVE
 

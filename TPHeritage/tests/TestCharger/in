@@ -1,0 +1,9 @@
+LOAD TestCharger/sav
+HIT a 0 0
+HIT b 0 0
+HIT c 0 0
+UNDO
+HIT a 0 0
+REDO
+HIT a 0 0
+EXIT

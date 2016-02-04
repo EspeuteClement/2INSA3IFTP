@@ -27,6 +27,7 @@ Le but du programme est de réaliser un éditeur de formes géométriques et per
 
 On peut effectuer les manipulations suivantes :
 
+
 \begin{itemize}
 	\item Ajout d'un nouvel objet
 	\item Intersection ou réunion de formes déjà créés
@@ -36,7 +37,9 @@ On peut effectuer les manipulations suivantes :
 \end{itemize}
 
 \section{Commandes}
-Le programme doit gérer les commandes suivantes.
+Le programme doit gérer les commandes suivantes :
+
+\emph{Note : si une commande est mal formée, on renverra \texttt{ERR}}.
 
 \subsection{Ajouter un segment}
 Commande : \texttt{S Name X1 Y1 X2 Y2}
@@ -52,7 +55,7 @@ Commande : \texttt{R Name X1 Y1 X2 Y2}
 Réponse : \texttt{[OK|ERR]}
 
 Description : 
-Ajoute un rectangle définit par son point gauche-haut $(X_1,Y_1)$, et sont point doite-bas $(X_2,Y_2)$. L'objet à un nom [name] qui est un mot composé de lettres et ou chiffres sans séparateurs à l'intérieur. Renvoie OK si la commande s'est bien exécutée, ERR dans le cas contraire (Exemple paramètres invalides ou erreur mémoire). La réponse peut s’accompagner d'un commentaire (ligne qui commence avec un \#)
+Ajoute un rectangle définit par son point gauche-haut $(X_1,Y_1)$, et sont point droite-bas $(X_2,Y_2)$. L'objet à un nom [name] qui est un mot composé de lettres et ou chiffres sans séparateurs à l'intérieur. Renvoie OK si la commande s'est bien exécutée, ERR dans le cas contraire (Exemple paramètres invalides ou erreur mémoire). La réponse peut s’accompagner d'un commentaire (ligne qui commence avec un \#)
 
 \subsection{Ajouter un polygone convexe}
 Commande : \texttt{PC Name X1 Y1 X2 Y2 ... Xn Yn}
@@ -84,9 +87,9 @@ Commande : \texttt{HIT Name X Y}
 Réponse : \texttt{[YES|NO]}
 
 Description : 
-Vérifie si le point de coordonnées X Y est à l'intérieur (y compris sur le périmètre avec $\pm 1$ unité de marge d'erreur sur l’appartenance au segment )
+Vérifie si le point de coordonnées X Y est à l'intérieur (y compris sur le périmètre avec $\pm 0.5$ unité de marge d'erreur sur l’appartenance au segment )
 % TODO : Vérifier la marge d'erreur
-de l'objet  Name. Renvoie YES si c'est le cas, sinon NO.
+de l'objet  Name. Renvoie YES si c'est le cas, sinon NO. La commande renvoie aussi NO si l'objet n'existe pas.
 
 \subsection{Opération de suppression}
 Commande : \texttt{DELETE Name1 Name2 ... NameN}

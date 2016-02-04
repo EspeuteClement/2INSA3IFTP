@@ -1,0 +1,7 @@
+S a 0 0 0 0
+HIT a 0 0
+UNDO
+HIT a 0 0
+REDO
+HIT a 0 0
+EXIT

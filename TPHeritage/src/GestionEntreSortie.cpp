@@ -8,6 +8,13 @@
 #include "Commandes/CommandeDeplacerObjet.h"
 #include "Commandes/CommandeSupprimerObjet.h"
 #include "Commandes/CommandeCharger.h"
+#include "Commandes/CommandeSauver.h"
+#include "Segment.h"
+#include "Rectangle.h"
+#include "PolygoneConvexe.h"
+#include "Reunion.h"
+#include "TestConvexe.h"
+#include "Intersection.h"
 
 #include "ObjetTest.h"
 
@@ -41,25 +48,37 @@ GestionEntreSortie::Retour GestionEntreSortie::LireLigne(std::string ligne, Dess
                 (tokens[0].compare("S") == 0 || tokens[0].compare("R") == 0)
                 )
             {
-                int x1 = stoi ( tokens[2] );
-                int y1 = stoi ( tokens[3] );
-                int x2 = stoi ( tokens[4] );
-                int y2 = stoi ( tokens[5] );
-                Retour r;
+                int t1 = stoi ( tokens[2] );
+                int z1 = stoi ( tokens[3] );
+                int t2 = stoi ( tokens[4] );
+                int z2 = stoi ( tokens[5] );
 
+
+                Retour r;
+                Objet* obj;
                 if (tokens[0].compare("S") == 0)
                 {
-                    //Creer segment
+                    Point p1(t1,z1);
+                    Point p2(t2,z2);
+                    cout <<"#" << t1 << " " << z1 << " " << t2 << " " << z2 << endl;
+                    obj = new Segment(tokens[1],p1,p2);
+                    //obj = new ObjetTest(tokens[1]);
                 }
                 else
                 {
-                    //Creer rectangle
+                    int x1 = t1 <= t2 ? t1 : t2;
+                    int x2 = t1 > t2 ? t1 : t2;
+                    int y1 = z1 > z2 ? z1 : z2;
+                    int y2 = z1 <= z2 ? z1 : z2;
+                    Point p1(x1,y1);
+                    Point p2(x2,y2);
+                    obj = new Rectangle(tokens[1],p1,p2);
                 }
 
                 r.commande = new CommandeAjouterObjet(
                     leDessin,
-                    new ObjetTest(tokens[1])
-                    //new Segment(Point(x1,y1),Point(x2,y2))
+                    //new ObjetTest(tokens[1])
+                    obj
                 );
 
                 r.valeur = OK;
@@ -80,21 +99,34 @@ GestionEntreSortie::Retour GestionEntreSortie::LireLigne(std::string ligne, Dess
                         points.push_back(new Point(x,y));
                     }
 
-                    Retour r;
+                    if (TestConvexe::EstPolygoneConvexe(points))
+                    {
+                        Retour r;
 
-                    r.commande = new CommandeAjouterObjet(
-                        leDessin,
-                        new ObjetTest(tokens[1])
-                        //new Polygone(tokens[1],points)
-                    );
+                        r.commande = new CommandeAjouterObjet(
+                            leDessin,
+                            
+                            new PolygoneConvexe(tokens[1],points)
+                        );
 
-                    r.valeur = OK;
-                    return r;
+                        r.valeur = OK;
+                        return r;
+                    }
+                    else
+                    {
+                        Retour r;
+                        r.commande = NULL;
+                        r.valeur = ERR_PARAM;
+
+                        cout << "#Le polygone n'est pas convexe" << endl;
+                        return r;
+                    }
+                    
 
                 }
                 else
                 {
-                    cout << "ERR" << endl;
+                    //cout << "ERR" << endl;
                     cout << "#Il faut au moins 3 points pour faire un polygone" << endl;
                 }
                 
@@ -105,7 +137,7 @@ GestionEntreSortie::Retour GestionEntreSortie::LireLigne(std::string ligne, Dess
                 )
             {
                 // Créer la liste des objets
-                vector<Objet> listeObjets;
+                vector<Objet*> listeObjets;
                 for (int i = 2; i < size; i++)
                 {
                     Objet* obj = leDessin->getObjet(tokens[i]);
@@ -113,7 +145,7 @@ GestionEntreSortie::Retour GestionEntreSortie::LireLigne(std::string ligne, Dess
                     // Si l'objet n'existe pas, retourner une erreur
                     if (obj == NULL)
                     {
-                        cout << "ERR" << endl;
+                        //cout << "ERR" << endl;
                         cout << "#Objet " << tokens[i] << "n'existe pas" << endl;
                         Retour r;
                         r.valeur = ERR_PARAM;
@@ -122,8 +154,8 @@ GestionEntreSortie::Retour GestionEntreSortie::LireLigne(std::string ligne, Dess
                     }
 
                     // TODO : Implémenter ça avec une vraie copie
-                    //Objet* objCopie = new Objet(*obj);
-                    //listeObjets.push_back(objCopie);
+                    //Objet* objCopie = obj->CopieObjet();
+                    listeObjets.push_back(obj);
                 }
 
                 Retour r;
@@ -131,15 +163,15 @@ GestionEntreSortie::Retour GestionEntreSortie::LireLigne(std::string ligne, Dess
                 Objet* obj;
                 if (tokens[0].compare("OR") == 0)
                 {
-                    //obj = new Reunion(tokens[1],listeObjets);
+                    obj = new Reunion(tokens[1],listeObjets);
                 }
                 else
                 {
-                    //obj = new Intersection(tokens[1],listeObjets);
+                    obj = new Intersection(tokens[1],listeObjets);
                 }
                 r.commande = new CommandeAjouterObjet(
                     leDessin,
-                    new ObjetTest(tokens[1])
+                    obj
                     
                 );
 
@@ -151,7 +183,7 @@ GestionEntreSortie::Retour GestionEntreSortie::LireLigne(std::string ligne, Dess
             {
                 int x = stoi ( tokens[2] );
                 int y = stoi ( tokens[3] );
-
+                
                 Retour r;
                 r.valeur = OK;
                 if (tokens[0].compare("HIT") == 0)
@@ -161,6 +193,7 @@ GestionEntreSortie::Retour GestionEntreSortie::LireLigne(std::string ligne, Dess
                     tokens[1],
                     Point(x,y)
                     ); 
+                   r.valeur = HIT;
                 }
                 else
                 {
@@ -204,6 +237,13 @@ GestionEntreSortie::Retour GestionEntreSortie::LireLigne(std::string ligne, Dess
                 r.valeur = OK;
                 return r; 
             }
+            else if (size == 2 && tokens[0].compare("SAVE") == 0)
+            {
+                Retour r;
+                r.commande = new CommandeSauver(leDessin,tokens[1]);
+                r.valeur = SAVE;
+                return r; 
+            }
             else if (tokens[0].compare("UNDO") == 0)
             {
                 Retour r;
@@ -234,13 +274,13 @@ GestionEntreSortie::Retour GestionEntreSortie::LireLigne(std::string ligne, Dess
             }
             else
             {
-                cout << "ERR" << endl;
+                //cout << "ERR" << endl;
                 cout << "#Commande non reconnue" <<endl;
             }
         }
         catch (const exception& e)
         {
-            cout << "ERR" << endl;
+            //cout << "ERR" << endl;
             cout << "#Mauvais arguments pour la commande" <<endl;
         }
 

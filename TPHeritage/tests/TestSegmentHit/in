@@ -1,0 +1,28 @@
+S a 0 0 8 4
+HIT a 0 0
+HIT a 0 2
+HIT a 8 4
+HIT a 3 1
+HIT a 4 2
+HIT a 5 2
+S b 0 0 15 0
+HIT b 0 0
+HIT b 15 0
+HIT b 1 0
+HIT b 5 0
+HIT b 10 0
+HIT b 16 0
+S c 5 5 5 10
+HIT c 5 5
+HIT c 5 10
+HIT c 5 6
+HIT c 5 9
+HIT c 6 9
+HIT c 11 11
+S d 10 10 15 15
+HIT d 10 10
+HIT d 15 15
+HIT d 13 13
+HIT d 13 14
+HIT d 16 16
+EXIT

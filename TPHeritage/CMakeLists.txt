@@ -14,21 +14,18 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 include_directories("${PROJECT_SOURCE_DIR}")
 
-#Création du fichier executable
-add_executable(
-
-        CommandeTestHistorique ${SOURCES} src/TestCommandeHistorique/TestMain.cpp
-)
 
 add_executable(
 	CommandeTestDessin ${SOURCES} src/TestDessin/TestDessin.cpp
 )
 
+
+
 #Configuration de l'édition de liens
 
 
-target_compile_features(CommandeTestHistorique PRIVATE cxx_range_for)
-
 target_compile_features(CommandeTestDessin PRIVATE cxx_range_for)
+
+
 
 #add_definitions(-DDEBUG)
