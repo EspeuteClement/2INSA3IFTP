@@ -5,8 +5,16 @@ CC = g++
 LINK = g++
 # Argument pour changer le nom de la sortie du compilo
 CC_OUTPUT_FLAG = -o
+
+# Linker la librairie tcl en fonction de l'utilisateur
+ifeq ($(LOGNAME),element)
+	LIB_TCL = -ltcl8.4
+else
+	LIB_TCL = -ltcl
+endif
+
 # Arguments pour le stade d'édition des liens
-LINK_FLAG = -lncurses -ltcl -Llib -ltp
+LINK_FLAG = -lncurses $(LIB_TCL) -Llib -ltp
 # Arguments pour le stade de compilation
 CC_COMP_FLAG = -c -std=c++11 -Wall -g -O3
 
