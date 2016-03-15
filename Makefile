@@ -14,7 +14,7 @@ else
 endif
 
 # Arguments pour le stade d'édition des liens
-LINK_FLAG = -lncurses $(LIB_TCL) -Llib -ltp
+LINK_FLAG = -Llib -ltp -lncurses $(LIB_TCL) 
 # Arguments pour le stade de compilation
 CC_COMP_FLAG = -c -std=c++11 -Wall -g -O3
 
