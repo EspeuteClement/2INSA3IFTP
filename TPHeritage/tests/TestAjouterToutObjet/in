@@ -1,8 +1,0 @@
-S a 0 0 0 0
-R b 0 0 5 5
-PC c 0 0 -5 5 0 10 5 5
-OR or a b c
-OI oi a b c
-OR or2 or oi
-OI oi2 or oi
-EXIT
