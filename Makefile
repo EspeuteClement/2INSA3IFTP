@@ -18,7 +18,6 @@ LINK_FLAG = -Llib -ltp -lncurses $(LIB_TCL)
 # Arguments pour le stade de compilation
 CC_COMP_FLAG = -c -std=c++11 -Wall -g -O3
 
-
 # Commande d'affichage
 PRINT = @printf
 
@@ -50,7 +49,7 @@ RUN = run
 BOLD = \033[1m
 RESET_BOLD = \033[21m
 
-
+RUN_SCRIPT = ./run.sh $(EXEC)
 
 ### VARIABLES ADDITIONELLES CREES AUTOMATIQUEMENT
 OBJS = $(subst .cpp,.o,$(addprefix $(OBJS_FOLDER),$(SRC)))
@@ -65,8 +64,8 @@ all : directories $(EXEC)
 
 # CIBLE OPTIONNELE POUR LANCER LE PROGRAMME APRES LE BUILD
 $(RUN) : all
-	$(PRINT) "$(BOLD)EXECUTION DE $(EXEC)\n$(RESET_BOLD)------------------\n"
-	@./$(EXEC)
+	printf "$(BOLD)EXECUTION DE $(RUN_SCRIPT)\n$(RESET_BOLD)------------------\n"
+	$(RUN_SCRIPT)
 
 # EDITION DES LIENS :
 $(EXEC) : $(OBJS)

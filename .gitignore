@@ -1,4 +1,4 @@
-CMakeFiles/
-CMakeCache.txt
 bin/
+build/
 cmake_install.cmake
+log.txt
