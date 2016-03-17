@@ -5,7 +5,7 @@ int main()
 {
 	InitialiserApplication(XTERM);
 
-	pause();
+	sleep(5);
 
 	TerminerApplication(true);
 
