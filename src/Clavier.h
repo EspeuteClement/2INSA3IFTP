@@ -16,7 +16,7 @@
 //////////////////////////////////////////////////////////////////  PUBLIC
 //---------------------------------------------------- Fonctions publiques
 
-void Clavier (key_t clefBPP, key_t clefBPA, key_t clefGB, key_t clefS);
+void Clavier (int[] filVoitureEntree, int filVoitureSortie);
 void Commande (char code , unsigned int valeur);
 
 #endif // CLAVIER_H
