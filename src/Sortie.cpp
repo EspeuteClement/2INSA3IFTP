@@ -32,8 +32,7 @@
 static int idMemoirePartagee;
 static int idFileVoitureSortie;
 static void * memPartagee;
-static int idSemVoitureAttente;
-static int idSemVoitureSortie;
+static int idSemMemPartagee;
 
 //------------------------------------------------------ Fonctions privées
 static void finSortieVoiture(int numSignal)
@@ -44,104 +43,64 @@ static void finSortieVoiture(int numSignal)
     pid_t pidFille = wait(&status);
     unsigned int numS=WEXITSTATUS(status);
 
-//Sem a voir 
+ 
     struct sembuf opP;
     opP.sem_num=0;
     opP.sem_op=-1;
     opP.sem_flg=0;
-//Sem a voir
+
 	struct sembuf opV;
     opV.sem_num=0;
     opV.sem_op=1;
     opV.sem_flg=0;
     
-    semop(idSemVS, &operationP, 1);
+    semop(idSemMP, &operationP, 1);
     Voiture uneVoiture = ((VoituresParking*)memPartagee)->voituresGarees[numS-1]；
-    semop(idSemVS, &operationV, 1);   
+    semop(idSemMP, &operationV, 1);   
     Effacer(numS);
     Effacer(MESSAGE);
 	Afficher(MESSAGE, "Une voiture vient de sortir");
+	AfficherSortie(uneVoiture.type,uneVoiture.numero,uneVoiture.arrivee,time(null));
 
     semop(idSemMP, &operationP, 1);
-    Voiture * lesVoitures = voitureEnAttente->requete;
-    if (attente[REQUETEBPP].type == PROF) {
-        if (attente[REQUETEGB].type != PROF) {
-            semop(idSemBPP, &operationV, 1);
-        }
-        else {
-            if (attente[REQUETEBPP].temps < attente[REQUETEGB].temps) {
-                semop(idSemBPP, &operationV, 1);
-            }
-            else {
-                semop(idSemGB, &operationV, 1);
-            }
-        }
-    }
-    else if (attente[REQUETEBPP].type == AUTRE) {
-        if (attente[REQUETEGB].type == PROF) {
-            semop(idSemGB, &operationV, 1);
-        }
-        else if (attente[REQUETEGB].type == AUTRE) {
-            if (attente[REQUETEBPA].type == AUTRE) {
-                if (attente[REQUETEBPA].temps < attente[REQUETEBPP].temps && attente[REQUETEBPA].temps < attente[REQUETEGB].temps) {
-                    semop(idSemBPA, &operationV, 1);
-                }
-                else if (attente[REQUETEBPP].temps < attente[REQUETEBPA].temps && attente[REQUETEBPP].temps < attente[REQUETEGB].temps) {
-                    semop(idSemBPP, &operationV, 1);
-                }
-                else if (attente[REQUETEGB].temps < attente[REQUETEBPA].temps && attente[REQUETEGB].temps < attente[REQUETEBPP].temps) {
-                    semop(idSemGB, &operationV, 1);
-                }
-            }
-            else {
-                if (attente[REQUETEBPP].temps < attente[REQUETEGB].temps) {
-                    semop(idSemBPP, &operationV, 1);
-                }
-                else {
-                    semop(idSemGB, &operationV, 1);
-                }
-            }
-        }
-        else {
-            if (attente[REQUETEBPA].TYPE == AUTRE) {
-                if (attente[REQUETEBPP].temps < attente[REQUETEBPA].temps) {
-                    semop(idSemBPP, &operationV, 1);
-                }
-                else {
-                    semop(idSemBPA, &operationV, 1);
-                }
-            }
-            else {
-                semop(idSemBPP, &operationV, 1);
-            }
-        }
-    }
-    else {
-        if (attente[REQUETEGB].type == PROF) {
-            semop(idSemGB, &operationV, 1);
-        }
-        else if (attente[REQUETEGB].type == AUTRE) {
-            if (attente[REQUETEBPA].type == AUTRE) {
-                if (attente[REQUETEBPA].temps < attente[REQUETEGB].temps) {
-                    semop(idSemBPA, &operationV, 1);
-                }
-                else {
-                    semop(idSemGB, &operationV, 1);
-                }
-            }
-            else {
-                semop(idSemGB, &operationV, 1);
-            }
-        }
-        else {
-            if (attente[REQUETEBPA].type == AUTRE) {
-                semop(idSemBPA, &operationV, 1);
-            }
-            else {
-                ((Parking*)parkingPtr)->placesDisponibles++；
-            }
-        }
-    }
+    Voiture * lesVoitures = ((VoituresParking*)memPartagee)->voituresEnAttente;
+
+	if(lesVoitures[FILE_PROF_BP].type==PROF && lesVoitures[FILE_GB].type!=PROF)
+	{
+		//BPP
+	}
+	else if(lesVoitures[FILE_PROF_BP].type==PROF && lesVoitures[FILE_GB].type==PROF)
+	{
+		if(lesVoitures[FILE_PROF_BP].arrivee <= lesVoitures[FILE_GB].arrivee)
+		{
+			//BPP
+		}
+		else
+		{
+			//GB
+		}
+	else if(lesVoitures[FILE_PROF_BP].type!=PROF && lesVoitures[FILE_GB].type==PROF)
+	{
+		//GB
+	}
+	else if(lesVoitures[FILE_AUTRE_BP].type==AUTRE && lesVoitures[FILE_GB].type==AUTRE)
+	{
+		if(lesVoitures[FILE_AUTRE_BP].arrivee <= lesVoitures[FILE_GB].arrivee)
+		{
+			//BPA
+		}
+		else
+		{
+			//GB
+		}
+	else if(lesVoitures[FILE_AUTRE_BP].type==AUTRE && lesVoitures[FILE_GB].type==AUCUN)
+	{
+		//BP
+	}
+	else if(lesVoitures[FILE_AUTRE_BP].type==AUCUN && lesVoitures[FILE_GB].type==AUTRE)
+	{
+		//GB
+	}
     semop(idSemMP, &operationV, 1);
 }//-----Fin de finSortieVoiture
 
@@ -150,15 +109,14 @@ static void finTache(int numSignal)
 // Mode d'emploi :
 //
 {
-	shmdt(voitureEnAttente);
-	shmdt(nbDePlaceLibres);
+	shmdt(memPartagee);
 	exit(0);
 }//-----Fin de finTache
 
 
 //////////////////////////////////////////////////////////////////  PUBLIC
 //---------------------------------------------------- Fonctions publiques
-void Sortie(int idMP, int idFVS, int idSemVA, int idSemVS)
+void Sortie(int idMP, int idFVS, int idSemMP)
 {
     struct sigaction handlerUSR2;
     handlerUSR2.sa_handler=finTache;
@@ -174,8 +132,7 @@ void Sortie(int idMP, int idFVS, int idSemVA, int idSemVS)
     
     idMemoirePartagee=idMP;
     idFileVoitureSortie=idFVS;
-    idSemVoitureAttente=idSemVA;
-    idSemVoitureSortie=idSemVS;
+    idSemMemPartagee=idSemMP;
     memPartagee=shmat(idMemoirePartagee,NULL,0);
     
     for(;;)
