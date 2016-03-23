@@ -29,6 +29,8 @@ using namespace std;
 #include "libs/Outils.h"
 #include "Config.h"
 #include "Entree.h"
+#include "Clavier.h"
+#include "Voiture.h"
 //------------------------------------------------------------- Constantes
 //----------------------------------------------------------- Types privés
 
@@ -36,6 +38,7 @@ using namespace std;
 
 static const int DROITS_SEM = S_IRUSR | S_IWUSR;
 static const int DROITS_SHM = S_IRUSR | S_IWUSR;
+static const int DROITS_MSG = S_IRUSR | S_IWUSR;
 
 static int semLog;
 
@@ -73,7 +76,7 @@ int main()
 
 		for (unsigned int file = 0; file < NOMBRE_FILE_VOITURE; file ++)
 		{
-			int msgId = msgget (IPC_PRIVATE, IPC_CREAT | IPC_EXCL);
+			int msgId = msgget (IPC_PRIVATE, IPC_CREAT | IPC_EXCL | DROITS_MSG);
 			if (msgId != -1)
 			{
 
@@ -93,20 +96,31 @@ int main()
 		int RequeteSortie = msgget (IPC_PRIVATE, IPC_CREAT | IPC_EXCL);
 
 		// Zone mémoire pour ComptePlacesLibres
-		int shmComptePlacesLibres = shmget (IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | DROITS_SHM);
-		int semComptePlacesLibres = semget (IPC_PRIVATE, 1, IPC_CREAT | IPC_EXCL | DROITS_SEM);
+		int shmVoituresParking = shmget (IPC_PRIVATE, sizeof(VoituresParking), IPC_CREAT | IPC_EXCL | DROITS_SHM);
+		int semVoituresParking = semget (IPC_PRIVATE, 1, IPC_CREAT | IPC_EXCL | DROITS_SEM);
 
-		semctl(semComptePlacesLibres, 0, SETVAL, 1);
+		semctl(semVoituresParking, 0, SETVAL, 1);
 
 		// ------------------------------------------------------- Phase moteur
+
+		pid_t pid_clavier;
+		if ((pid_clavier = fork()) == 0 )
+		{
+			Clavier(FilesVoiture, RequeteSortie);
+		}
+		else
+		{
+			pid_t pid1 = CreerEntree(AUCUNE,shmVoituresParking,semVoituresParking,FilesVoiture[0],semOuvrirPortes,0);
+			ecrireLog("Coucou\n");
+			std::cerr << "Wtf" << std::endl;
+			pid_t pid2 = CreerEntree(AUCUNE,shmVoituresParking,semVoituresParking,FilesVoiture[0],semOuvrirPortes,0);
+		}
 		
-		sleep(2);
-		pid_t pid1 = CreerEntree(AUCUNE,shmComptePlacesLibres,semComptePlacesLibres,FilesVoiture[0],semOuvrirPortes,0);
-		ecrireLog("Coucou\n");
-		std::cerr << "Wtf" << std::endl;
-		pid_t pid2 = CreerEntree(AUCUNE,shmComptePlacesLibres,semComptePlacesLibres,FilesVoiture[0],semOuvrirPortes,0);
-		//pid_t pid3 = CreerEntree(AUCUNE,shmComptePlacesLibres,semComptePlacesLibres,FilesVoiture[0],semOuvrirPortes,0);
-		//pid_t pid4 = CreerEntree(AUCUNE,shmComptePlacesLibres,semComptePlacesLibres,FilesVoiture[0],semOuvrirPortes,0);
+		waitpid( pid_clavier, NULL, 0);
+
+
+		//pid_t pid3 = CreerEntree(AUCUNE,shmVoituresParking,semVoituresParking,FilesVoiture[0],semOuvrirPortes,0);
+		//pid_t pid4 = CreerEntree(AUCUNE,shmVoituresParking,semVoituresParking,FilesVoiture[0],semOuvrirPortes,0);
 
 		//waitpid(pid1, NULL, 0);
 		//waitpid(pid2, NULL, 0);
@@ -129,8 +143,8 @@ int main()
 		msgctl (RequeteSortie, IPC_RMID, 0);
 
 		// Zone mémoire pour ComptePlacesLibres
-		shmctl (shmComptePlacesLibres, IPC_RMID, 0);
-		semctl (semComptePlacesLibres, IPC_RMID, 0);
+		shmctl (shmVoituresParking, IPC_RMID, 0);
+		semctl (semVoituresParking, IPC_RMID, 0);
 
 		TerminerApplication(true);
 
@@ -140,7 +154,7 @@ int main()
 	return 0;
 }
 
-void ecrireLog(char* message)
+void ecrireLog(char const *message)
 {
 	semop( semLog, &reserver, 1);
 	std::cerr << message;

@@ -16,7 +16,7 @@
 //////////////////////////////////////////////////////////////////  PUBLIC
 //---------------------------------------------------- Fonctions publiques
 
-void Clavier (int[] filVoitureEntree, int filVoitureSortie);
+void Clavier (int *filVoitureEntree, int filVoitureSortie);
 void Commande (char code , unsigned int valeur);
 
 #endif // CLAVIER_H

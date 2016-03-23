@@ -17,6 +17,11 @@
 
 //------------------------------------------------------ Include personnel
 #include "Entree.h"
+#include "Voiture.h"
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/msg.h>
+
 //#include "Config.h"
 //#include "Mere.h"
 
@@ -36,6 +41,10 @@ int CreerEntree(TypeBarriere bariere,
 	if(pid == 0)
 	{
         ecrireLog("Process Creer Entree Fils\n");
+        Voiture v = {AUCUN,0,0};
+        
+        std::cerr << msgrcv(fileVoiture, (void *) &v, sizeof(Voiture),0, 0) << std::endl;
+        ecrireLog("Voiture Recue\n");
 		exit(1);
 	}
     char str[50];

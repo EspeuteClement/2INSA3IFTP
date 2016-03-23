@@ -14,7 +14,7 @@ enum FileVoiture {
 /** Ecrit message dans le log. La fonction est thread safe.
 *  @param message un null terminated string à écrire dans le log
 */
-void ecrireLog(char* message);
+void ecrireLog(char const *message);
 
 // -------------------------------------- Structure de controle des sémaphores
 // struct sembuf reserver;

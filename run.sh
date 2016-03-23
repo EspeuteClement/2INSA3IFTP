@@ -16,7 +16,9 @@ ipcs > ipcsApres.tmp
 ipcs -m > ipcsMApres.tmp
 ipcs -q > ipcsQApres.tmp
 ipcs -s > ipcsSApres.tmp
+
 ps -u > psApres.tmp
+diff -u psAvant.tmp psApres.tmp | grep -E "^\+0" > psDiff.tmp
 
 diff -u ipcsAvant.tmp ipcsApres.tmp | grep -E "^\+0" > ipcsDiff.tmp
 diff -u ipcsMAvant.tmp ipcsMApres.tmp | grep -E "^\+0" > ipcsMDiff.tmp
@@ -44,11 +46,14 @@ else
 	        echo No
 	        ;;
 	esac
-	
-
-
-
 fi
+
+if [ "`cat psDiff.tmp | wc -l`" -eq "0" ]; then
+	printf "Aucune fuite de processus detectée\n------------------\n"
+else
+	printf "Attention, fuite de processus detectée !\n------------------\n"
+fi
+
 rm *.tmp
 
 #usage : ipcsRmFile fileName type
@@ -73,8 +78,3 @@ rm *.tmp
 # 	printf "Attention, fuite de ressource detectée !\n------------------\n"
 # fi
 
-# if [ "$PROCAVANT" -eq "$PROCAPRES" ]; then
-# 	printf "Aucune fuite de 	processus detectée\n------------------\n"
-# else
-# 	printf "Attention, fuite de processus detectée !\n------------------\n"
-# fi
