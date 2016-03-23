@@ -7,8 +7,9 @@
 
 /////////////////////////////////////////////////////////////////  INCLUDE
 //--------------------------------------------------- Interfaces utilisées
-#include "/public/tp/tp-multitache/Outils.h"
+#include "libs/Outils.h"
 #include <time.h>
+#include "Mere.h"
 
 //------------------------------------------------------------- Constantes
 
@@ -22,6 +23,12 @@ typedef struct {
 	unsigned int numero;
 	time_t  arrivee;
 }Voiture;
+
+typedef struct {
+	unsigned int placesLibres;
+	Voiture voituresGarees[NB_PLACES];
+	Voiture voituresEnAttente[NOMBRE_FILE_VOITURE];
+} VoituresParking;
 
 #endif // VOITURE_H
 

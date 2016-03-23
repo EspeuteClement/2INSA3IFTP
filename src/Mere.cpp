@@ -18,14 +18,19 @@ using namespace std;
 #include <sys/stat.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
-
+#include <iostream>
 
 
 //------------------------------------------------------ Include personnel
 #include "Mere.h"
 #include "libs/Outils.h"
 #include "Config.h"
+#include "Entree.h"
+#include "Clavier.h"
+#include "Voiture.h"
 //------------------------------------------------------------- Constantes
 //----------------------------------------------------------- Types privés
 
@@ -33,18 +38,22 @@ using namespace std;
 
 static const int DROITS_SEM = S_IRUSR | S_IWUSR;
 static const int DROITS_SHM = S_IRUSR | S_IWUSR;
+static const int DROITS_MSG = S_IRUSR | S_IWUSR;
+
+static int semLog;
+
+//------------------------------------------------------------- Globales
+sembuf reserver = {0,-1,0};
+sembuf liberer  = {0,1,0};
 
 // Tâche principale du programme
 int main()
 {
 	// --------------------------------------------- Phase d'initialisation
 	
-	// Ouvrir un fichier de log
-	FILE* log = fopen("log.txt","w");
-	if (log)
-	{
+	// Ouvrir un fichie
 		// Créer un mutex pour le fichier log
-		int semLog = semget (IPC_PRIVATE, 1, IPC_CREAT | IPC_EXCL | DROITS_SEM);
+		semLog = semget (IPC_PRIVATE, 1, IPC_CREAT | IPC_EXCL | DROITS_SEM);
 		semctl (semLog, 0, SETVAL, 1);
 
 		InitialiserApplication(XTERM);
@@ -64,37 +73,58 @@ int main()
 		// Boites aux lettres files voitures:
 		int FilesVoiture[NOMBRE_FILE_VOITURE];
 
-		for (int file = 0; file < NOMBRE_FILE_VOITURE; file ++)
+
+		for (unsigned int file = 0; file < NOMBRE_FILE_VOITURE; file ++)
 		{
-			int msId = msgget (IPC_PRIVATE, IPC_CREAT | IPC_EXCL);
-			if (msId != -1)
+			int msgId = msgget (IPC_PRIVATE, IPC_CREAT | IPC_EXCL | DROITS_MSG);
+			if (msgId != -1)
 			{
-				semop( semLog, &reserver, 1);
-				fprintf(log,"Création de la FileVoiture %d\n",file);
-				semop( semLog, &liberer, 1);
-				FilesVoiture[file] = msId;
+
+				FilesVoiture[file] = msgId;
 			}
 			else
 			{
 				// Prévoir en cas de problème
-				semop( semLog, &reserver, 1);
-				fprintf(log,"Erreur : Impossible de créer FileVoiture %d\n",file);
-				semop( semLog, &liberer, 1);
+				
 			}
 		}
+
+		// Sémaphores pour l'ouverture des portes
+		int semOuvrirPortes = semget(IPC_PRIVATE, NOMBRE_FILE_VOITURE, IPC_CREAT | IPC_EXCL | DROITS_SEM) ;
 
 		// Boite au lettre pour sortie
 		int RequeteSortie = msgget (IPC_PRIVATE, IPC_CREAT | IPC_EXCL);
 
 		// Zone mémoire pour ComptePlacesLibres
-		int shmComptePlacesLibres = shmget (IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | DROITS_SHM);
-		int semComptePlacesLibres = semget (IPC_PRIVATE, 1, IPC_CREAT | IPC_EXCL | DROITS_SEM);
+		int shmVoituresParking = shmget (IPC_PRIVATE, sizeof(VoituresParking), IPC_CREAT | IPC_EXCL | DROITS_SHM);
+		int semVoituresParking = semget (IPC_PRIVATE, 1, IPC_CREAT | IPC_EXCL | DROITS_SEM);
 
-		semctl(semComptePlacesLibres, 0, SETVAL, 1);
+		semctl(semVoituresParking, 0, SETVAL, 1);
 
 		// ------------------------------------------------------- Phase moteur
-		sleep(2);
 
+		pid_t pid_clavier;
+		if ((pid_clavier = fork()) == 0 )
+		{
+			Clavier(FilesVoiture, RequeteSortie);
+		}
+		else
+		{
+			pid_t pid1 = CreerEntree(AUCUNE,shmVoituresParking,semVoituresParking,FilesVoiture[0],semOuvrirPortes,0);
+			ecrireLog("Coucou\n");
+			std::cerr << "Wtf" << std::endl;
+			pid_t pid2 = CreerEntree(AUCUNE,shmVoituresParking,semVoituresParking,FilesVoiture[0],semOuvrirPortes,0);
+		}
+		
+		waitpid( pid_clavier, NULL, 0);
+
+
+		//pid_t pid3 = CreerEntree(AUCUNE,shmVoituresParking,semVoituresParking,FilesVoiture[0],semOuvrirPortes,0);
+		//pid_t pid4 = CreerEntree(AUCUNE,shmVoituresParking,semVoituresParking,FilesVoiture[0],semOuvrirPortes,0);
+
+		//waitpid(pid1, NULL, 0);
+		//waitpid(pid2, NULL, 0);
+		//waitpid(pid3, NULL, 0);
 		// ----------------------------------------------  Phase de destruction
 		
 
@@ -106,20 +136,27 @@ int main()
 			msgctl (FilesVoiture[file], IPC_RMID, 0);
 		}
 
-		// Boite au lettre pour sortie
+		// Sémaphores pour l'ouverture des portes
+		semctl(semOuvrirPortes,0, IPC_RMID,0);
+
+		// Boite aux lettres pour sortie
 		msgctl (RequeteSortie, IPC_RMID, 0);
 
 		// Zone mémoire pour ComptePlacesLibres
-		shmctl (shmComptePlacesLibres, IPC_RMID, 0);
-		semctl (semComptePlacesLibres, IPC_RMID, 0);
+		shmctl (shmVoituresParking, IPC_RMID, 0);
+		semctl (semVoituresParking, IPC_RMID, 0);
 
 		TerminerApplication(true);
 
 		// Liberer le sémaphore du ficher de log
-		semctl( semLog, IPC_RMID, 0);
-
-		fclose(log);
-	}
+		semctl( semLog, 0,IPC_RMID, 0);
 
 	return 0;
+}
+
+void ecrireLog(char const *message)
+{
+	semop( semLog, &reserver, 1);
+	std::cerr << message;
+	semop( semLog, &liberer, 1);
 }

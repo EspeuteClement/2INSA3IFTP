@@ -5,14 +5,17 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/msg.h>
 #include <stdlib.h>
 //------------------------------------------------------ Include personnel
 #include "Clavier.h"
 #include "Voiture.h"
 #include "Mere.h"
-#include "/public/tp/tp-multitache/Menu.h"
-#include "/public/tp/tp-multitache/Outils.h"
-#include "/public/tp/tp-multitache/Heure.h"
+#include "libs/Menu.h"
+#include "libs/Outils.h"
+#include "libs/Heure.h"
 
 ///////////////////////////////////////////////////////////////////  PRIVE
 //------------------------------------------------------------- Constantes
@@ -39,7 +42,7 @@ static unsigned int numeroter()
 
 //////////////////////////////////////////////////////////////////  PUBLIC
 //---------------------------------------------------- Fonctions publiques
-void Clavier (int[] filVoitureEntree, int filVoitureSortie)
+void Clavier (int *filVoitureEntree, int filVoitureSortie)
 // Algorithme : On récupère les id des files d'attente des portes et
 //              appelle en boucle infinie Menu
 //
@@ -72,12 +75,12 @@ void Commande (char code , unsigned int valeur)
             uneVoiture.type = AUTRE;
             uneVoiture.numero = numeroter();
             if (valeur == 1) {
-                msgsnd (idfileVoitureBPA, &uneVoiture, sizeof(uneVoiture), 0);
+                msgsnd (idfileVoitureEntree[FILE_AUTRE_BP], &uneVoiture, sizeof(uneVoiture), 0);
                 Effacer(MESSAGE);
                 Afficher(MESSAGE,"Une voiture d'autre vient d'arriver à la porte BPA");
             }
             else if (valeur == 2) {
-                msgsnd (idfileVoitureGB, &uneVoiture, sizeof(uneVoiture), 0);
+                msgsnd (idfileVoitureEntree[FILE_GB], &uneVoiture, sizeof(uneVoiture), 0);
                 Effacer(MESSAGE);
                 Afficher(MESSAGE,"Une voiture d'autre vient d'arriver à la porte GB");
             }
@@ -88,12 +91,12 @@ void Commande (char code , unsigned int valeur)
             uneVoiture.type = PROF;
             uneVoiture.numero = numeroter();
             if (valeur == 1) {
-                msgsnd (idfileVoitureBPP, &uneVoiture, sizeof(uneVoiture), 0);
+                msgsnd (idfileVoitureEntree[FILE_PROF_BP], &uneVoiture, sizeof(uneVoiture), 0);
                 Effacer(MESSAGE);
                 Afficher(MESSAGE,"Une voiture de prof vient d'arriver à la porte BPP");
             }
             else if (valeur == 2) {
-                msgsnd (idfileVoitureGB, &uneVoiture, sizeof(uneVoiture), 0);
+                msgsnd (idfileVoitureEntree[FILE_GB], &uneVoiture, sizeof(uneVoiture), 0);
                 Effacer(MESSAGE);
                 Afficher(MESSAGE,"Une voiture de prof vient d'arriver à la porte GB");
             }
