@@ -3,7 +3,7 @@
 #define _CONFIG_H_
 
 #include <sys/sem.h>
-const struct sembuf reserver = {0,-1,0};
-const struct sembuf liberer  = {0,1,0};
+struct sembuf reserver = {0,-1,0};
+struct sembuf liberer  = {0,1,0};
 
 #endif

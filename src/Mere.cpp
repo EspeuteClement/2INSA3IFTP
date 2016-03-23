@@ -15,25 +15,24 @@ using namespace std;
 #include <signal.h>
 #include <sys/msg.h>
 #include <stdio.h>
+#include <sys/stat.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+
 
 
 
 //------------------------------------------------------ Include personnel
-//#include "Mere.h"
+#include "Mere.h"
 #include "libs/Outils.h"
 #include "Config.h"
 //------------------------------------------------------------- Constantes
 //----------------------------------------------------------- Types privés
 
 //------------------------------------------------------------------- Enum
-enum FileVoiture {
-  FILE_PROF_BP,   // 0 : entrée du parking pour les profs
-  FILE_AUTRE_BP,  // 1 : entrée du parking pour les autres
-  FILE_GB, // 2 : entrée du parking pour les profs ou autres
-  NOMBRE_FILE_VOITURE // 3 : le nombre max de files voitures
-};
 
-static const int DROITS_SEM = 0660;
+static const int DROITS_SEM = S_IRUSR | S_IWUSR;
+static const int DROITS_SHM = S_IRUSR | S_IWUSR;
 
 // Tâche principale du programme
 int main()
@@ -46,6 +45,7 @@ int main()
 	{
 		// Créer un mutex pour le fichier log
 		int semLog = semget (IPC_PRIVATE, 1, IPC_CREAT | IPC_EXCL | DROITS_SEM);
+		semctl (semLog, 0, SETVAL, 1);
 
 		InitialiserApplication(XTERM);
 
@@ -69,18 +69,31 @@ int main()
 			int msId = msgget (IPC_PRIVATE, IPC_CREAT | IPC_EXCL);
 			if (msId != -1)
 			{
+				semop( semLog, &reserver, 1);
+				fprintf(log,"Création de la FileVoiture %d\n",file);
+				semop( semLog, &liberer, 1);
 				FilesVoiture[file] = msId;
 			}
 			else
 			{
 				// Prévoir en cas de problème
-				fprintf(log,"Erreur : Impossible de créer FileVoiture %d",file);
+				semop( semLog, &reserver, 1);
+				fprintf(log,"Erreur : Impossible de créer FileVoiture %d\n",file);
+				semop( semLog, &liberer, 1);
 			}
 		}
 
+		// Boite au lettre pour sortie
+		int RequeteSortie = msgget (IPC_PRIVATE, IPC_CREAT | IPC_EXCL);
+
+		// Zone mémoire pour ComptePlacesLibres
+		int shmComptePlacesLibres = shmget (IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | DROITS_SHM);
+		int semComptePlacesLibres = semget (IPC_PRIVATE, 1, IPC_CREAT | IPC_EXCL | DROITS_SEM);
+
+		semctl(semComptePlacesLibres, 0, SETVAL, 1);
 
 		// ------------------------------------------------------- Phase moteur
-		sleep(5);
+		sleep(2);
 
 		// ----------------------------------------------  Phase de destruction
 		
@@ -93,6 +106,12 @@ int main()
 			msgctl (FilesVoiture[file], IPC_RMID, 0);
 		}
 
+		// Boite au lettre pour sortie
+		msgctl (RequeteSortie, IPC_RMID, 0);
+
+		// Zone mémoire pour ComptePlacesLibres
+		shmctl (shmComptePlacesLibres, IPC_RMID, 0);
+		semctl (semComptePlacesLibres, IPC_RMID, 0);
 
 		TerminerApplication(true);
 

@@ -64,7 +64,7 @@ all : directories $(EXEC)
 
 # CIBLE OPTIONNELE POUR LANCER LE PROGRAMME APRES LE BUILD
 $(RUN) : all
-	printf "$(BOLD)EXECUTION DE $(RUN_SCRIPT)\n$(RESET_BOLD)------------------\n"
+	$(PRINT) "$(BOLD)EXECUTION DE $(RUN_SCRIPT)\n$(RESET_BOLD)------------------\n"
 	$(RUN_SCRIPT)
 
 # EDITION DES LIENS :
@@ -99,4 +99,6 @@ $(CLEAN) :
 
 ### CIBLES DE DEPENDANCES
 
-$(SRC_FOLDER)Mere.cpp :
+$(SRC_FOLDER)Mere.cpp : $(SRC_FOLDER)Config.h
+
+#$(SRC_FOLDER)Clavier.cpp : $(SRC_FOLDER)Clavier.h
