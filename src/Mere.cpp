@@ -64,15 +64,16 @@ int main()
 		// Boites aux lettres files voitures:
 		int FilesVoiture[NOMBRE_FILE_VOITURE];
 
-		for (int file = 0; file < NOMBRE_FILE_VOITURE; file ++)
+
+		for (unsigned int file = 0; file < NOMBRE_FILE_VOITURE; file ++)
 		{
-			int msId = msgget (IPC_PRIVATE, IPC_CREAT | IPC_EXCL);
-			if (msId != -1)
+			int msgId = msgget (IPC_PRIVATE, IPC_CREAT | IPC_EXCL);
+			if (msgId != -1)
 			{
 				semop( semLog, &reserver, 1);
 				fprintf(log,"Création de la FileVoiture %d\n",file);
 				semop( semLog, &liberer, 1);
-				FilesVoiture[file] = msId;
+				FilesVoiture[file] = msgId;
 			}
 			else
 			{
@@ -82,6 +83,9 @@ int main()
 				semop( semLog, &liberer, 1);
 			}
 		}
+
+		// Sémaphores pour l'ouverture des portes
+		int semOuvrirPortes = semget(IPC_PRIVATE, NOMBRE_FILE_VOITURE, IPC_CREAT | IPC_EXCL | DROITS_SEM) ;
 
 		// Boite au lettre pour sortie
 		int RequeteSortie = msgget (IPC_PRIVATE, IPC_CREAT | IPC_EXCL);
@@ -106,7 +110,10 @@ int main()
 			msgctl (FilesVoiture[file], IPC_RMID, 0);
 		}
 
-		// Boite au lettre pour sortie
+		// Sémaphores pour l'ouverture des portes
+		semctl(semOuvrirPortes,0, IPC_RMID,0);
+
+		// Boite aux lettres pour sortie
 		msgctl (RequeteSortie, IPC_RMID, 0);
 
 		// Zone mémoire pour ComptePlacesLibres
@@ -116,7 +123,7 @@ int main()
 		TerminerApplication(true);
 
 		// Liberer le sémaphore du ficher de log
-		semctl( semLog, IPC_RMID, 0);
+		semctl( semLog, 0,IPC_RMID, 0);
 
 		fclose(log);
 	}
