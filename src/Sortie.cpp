@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////  INCLUDE
 //-------------------------------------------------------- Include système
-##include <sys/types.h>
+#include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
 #include <time.h>
@@ -19,8 +19,9 @@
 //------------------------------------------------------ Include personnel
 #include "/public/tp/tp-multitache/Outils.h"
 #include "/public/tp/tp-multitache/Heure.h"
-#include "Config.h"
+#include "Mere.h"
 #include "Sortie.h"
+#include "Clavier.h"
 ///////////////////////////////////////////////////////////////////  PRIVE
 //------------------------------------------------------------- Constantes
 
@@ -28,74 +29,41 @@
 
 //---------------------------------------------------- Variables statiques
 
-
+static int idMemoirePartagee;
+static int idFileVoitureSortie;
+static void * memPartagee;
+static int idSemVoitureAttente;
+static int idSemVoitureSortie;
 
 //------------------------------------------------------ Fonctions privées
-static void finVoiturier(int noSignal)
+static void finSortieVoiture(int numSignal)
 // Mode d'emploi :
 //
-// Contrat :
-//
-// Algorithme :
 {
-    int crdu;
-    pid_t pidTacheFille = wait(&crdu);
-    unsigned int numPlace=WEXITSTATUS(crdu);
+    int status;
+    pid_t pidFille = wait(&status);
+    unsigned int numS=WEXITSTATUS(status);
+
+//Sem a voir 
+    struct sembuf opP;
+    opP.sem_num=0;
+    opP.sem_op=-1;
+    opP.sem_flg=0;
+//Sem a voir
+	struct sembuf opV;
+    opV.sem_num=0;
+    opV.sem_op=1;
+    opV.sem_flg=0;
     
-    struct sembuf operationP;
-    operationP.sem_num=0;
-    operationP.sem_op=-1;
-    operationP.sem_flg=0;
-    
-	struct sembuf operationV;
-    operationV.sem_num=0;
-    operationV.sem_op=1;
-    operationV.sem_flg=0;
-    
+    semop(idSemVS, &operationP, 1);
+    Voiture uneVoiture = ((VoituresParking*)memPartagee)->voituresGarees[numS-1]；
+    semop(idSemVS, &operationV, 1);   
+    Effacer(numS);
+    Effacer(MESSAGE);
+	Afficher(MESSAGE, "Une voiture vient de sortir");
+
     semop(idSemMP, &operationP, 1);
-    Voiture uneVoiture = ((Parking*)parkingPtr)->tabVoiture[numPlace-1]；
-    semop(idSemMP, &operationV, 1);
-    
-    switch (numPlace)
-    {
-        case 1 :
-        	Effacer(ETAT_P1);
-            break;
-    
-        case 2 :
-        	Effacer(ETAT_P2);
-            break;
-        
-        case 3 :
-        	Effacer(ETAT_P3);
-            break;
-        
-        case 4 :
-        	Effacer(ETAT_P4);
-            break;
-        
-        case 5 :
-        	Effacer(ETAT_P5);
-            break;
-        
-        case 6 :
-        	Effacer(ETAT_P6);
-            break;
-        
-        case 7 :
-        	Effacer(ETAT_P7);
-            break;
-        
-        case 8 :
-        	Effacer(ETAT_P8);
-            break;
-        
-        default :
-         break;
-    }
-    
-    semop(idSemMP, &operationP, 1);
-    Voiture * attente = ((Parking*)parkingPtr)->filAttente;
+    Voiture * lesVoitures = voitureEnAttente->requete;
     if (attente[REQUETEBPP].type == PROF) {
         if (attente[REQUETEGB].type != PROF) {
             semop(idSemBPP, &operationV, 1);
@@ -175,26 +143,22 @@ static void finVoiturier(int noSignal)
         }
     }
     semop(idSemMP, &operationV, 1);
-}
+}//-----Fin de finSortieVoiture
 
 
 static void finTache(int numSignal)
 // Mode d'emploi :
 //
-// Contrat :
-//
-// Algorithme :
 {
-	shmdt(parkingPtr);
-	close(descCanal);
+	shmdt(voitureEnAttente);
+	shmdt(nbDePlaceLibres);
 	exit(0);
-}//Fin finTache
-
+}//-----Fin de finTache
 
 
 //////////////////////////////////////////////////////////////////  PUBLIC
 //---------------------------------------------------- Fonctions publiques
-void Sortie(int idVA, int idNP)
+void Sortie(int idMP, int idFVS, int idSemVA, int idSemVS)
 {
     struct sigaction handlerUSR2;
     handlerUSR2.sa_handler=finTache;
@@ -203,28 +167,21 @@ void Sortie(int idVA, int idNP)
     sigaction(SIGUSR2, &handlerUSR2, NULL);
 	
 	struct sigaction handlerCHLD;
-    handlerCHLD.sa_handler=finVoiturier;
-    sigemptyset(&actionFinVoiturier.sa_mask);
-    actionFinVoiturier.sa_flags=0;
-    
+    handlerCHLD.sa_handler=finSortieVoiture;
+    sigemptyset(&handlerCHLD.sa_mask);
+    handlerCHLD.sa_flags=0;  
     sigaction(SIGCHILD, &actionFinVoiturier, NULL);
     
-    
-    descCanal = open(CHEMIN_SORTIE, O_RDONLY);
-    
-    idSemBPP = semBPP;
-    idSemBPA = semBPA;
-    idSemGB = semGB;
-    idSemMP = semMP;
-    idMemoirePartage = memoirePartage;
-    parkingPtr = shmat(idMemoirePartage, NULL, 0);
+    idMemoirePartagee=idMP;
+    idFileVoitureSortie=idFVS;
+    idSemVoitureAttente=idSemVA;
+    idSemVoitureSortie=idSemVS;
+    memPartagee=shmat(idMemoirePartagee,NULL,0);
     
     for(;;)
 	{
-        int numPlace;
-        read(descCanal, &numPlace, sizeof(numPlace));
-		Effacer(MESSAGE);
-		Afficher(MESSAGE, "Une voiture vient de sortir");
-		SortirVoiture(numPlace);
+        int numS;
+        msgrcv (idFileVoitureSortie, &numS, sizeof(int), 0);
+		SortirVoiture(numS);
 	}
-}
+}//-----Fin de Sortie
