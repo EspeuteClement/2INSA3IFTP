@@ -1,0 +1,10 @@
+src/Entree.cpp: In function ‘int CreerEntree(TypeBarriere, int, int, int, int, int)’:
+src/Entree.cpp:38:48: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+         ecrireLog("Process Creer Entree Fils\n");
+                                                ^
+Process Creer Entree Pere5549
+Process Creer Entree Fils
+Coucou
+Wtf
+Process Creer Entree Pere5550
+Process Creer Entree Fils

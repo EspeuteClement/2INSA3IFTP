@@ -25,7 +25,7 @@ PRINT = @printf
 # Nom du fichier de sortie
 EXEC = bin/Parking
 #Nom des fichers sources
-SRC = Mere.cpp
+SRC = Mere.cpp Entree.cpp
 # Nom du dossier sources
 SRC_FOLDER = src/
 # Le dossier où metre les fichiers objs
@@ -100,5 +100,7 @@ $(CLEAN) :
 ### CIBLES DE DEPENDANCES
 
 $(SRC_FOLDER)Mere.cpp : $(SRC_FOLDER)Config.h
+
+$(SRC_FOLDER)Entree.cpp : $(SRC_FOLDER)Entree.h
 
 #$(SRC_FOLDER)Clavier.cpp : $(SRC_FOLDER)Clavier.h

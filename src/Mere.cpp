@@ -18,14 +18,17 @@ using namespace std;
 #include <sys/stat.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
-
+#include <iostream>
 
 
 //------------------------------------------------------ Include personnel
 #include "Mere.h"
 #include "libs/Outils.h"
 #include "Config.h"
+#include "Entree.h"
 //------------------------------------------------------------- Constantes
 //----------------------------------------------------------- Types privés
 
@@ -34,17 +37,20 @@ using namespace std;
 static const int DROITS_SEM = S_IRUSR | S_IWUSR;
 static const int DROITS_SHM = S_IRUSR | S_IWUSR;
 
+static int semLog;
+
+//------------------------------------------------------------- Globales
+sembuf reserver = {0,-1,0};
+sembuf liberer  = {0,1,0};
+
 // Tâche principale du programme
 int main()
 {
 	// --------------------------------------------- Phase d'initialisation
 	
-	// Ouvrir un fichier de log
-	FILE* log = fopen("log.txt","w");
-	if (log)
-	{
+	// Ouvrir un fichie
 		// Créer un mutex pour le fichier log
-		int semLog = semget (IPC_PRIVATE, 1, IPC_CREAT | IPC_EXCL | DROITS_SEM);
+		semLog = semget (IPC_PRIVATE, 1, IPC_CREAT | IPC_EXCL | DROITS_SEM);
 		semctl (semLog, 0, SETVAL, 1);
 
 		InitialiserApplication(XTERM);
@@ -70,17 +76,13 @@ int main()
 			int msgId = msgget (IPC_PRIVATE, IPC_CREAT | IPC_EXCL);
 			if (msgId != -1)
 			{
-				semop( semLog, &reserver, 1);
-				fprintf(log,"Création de la FileVoiture %d\n",file);
-				semop( semLog, &liberer, 1);
+
 				FilesVoiture[file] = msgId;
 			}
 			else
 			{
 				// Prévoir en cas de problème
-				semop( semLog, &reserver, 1);
-				fprintf(log,"Erreur : Impossible de créer FileVoiture %d\n",file);
-				semop( semLog, &liberer, 1);
+				
 			}
 		}
 
@@ -97,8 +99,18 @@ int main()
 		semctl(semComptePlacesLibres, 0, SETVAL, 1);
 
 		// ------------------------------------------------------- Phase moteur
+		
 		sleep(2);
+		pid_t pid1 = CreerEntree(AUCUNE,shmComptePlacesLibres,semComptePlacesLibres,FilesVoiture[0],semOuvrirPortes,0);
+		ecrireLog("Coucou\n");
+		std::cerr << "Wtf" << std::endl;
+		pid_t pid2 = CreerEntree(AUCUNE,shmComptePlacesLibres,semComptePlacesLibres,FilesVoiture[0],semOuvrirPortes,0);
+		//pid_t pid3 = CreerEntree(AUCUNE,shmComptePlacesLibres,semComptePlacesLibres,FilesVoiture[0],semOuvrirPortes,0);
+		//pid_t pid4 = CreerEntree(AUCUNE,shmComptePlacesLibres,semComptePlacesLibres,FilesVoiture[0],semOuvrirPortes,0);
 
+		//waitpid(pid1, NULL, 0);
+		//waitpid(pid2, NULL, 0);
+		//waitpid(pid3, NULL, 0);
 		// ----------------------------------------------  Phase de destruction
 		
 
@@ -125,8 +137,12 @@ int main()
 		// Liberer le sémaphore du ficher de log
 		semctl( semLog, 0,IPC_RMID, 0);
 
-		fclose(log);
-	}
-
 	return 0;
+}
+
+void ecrireLog(char* message)
+{
+	semop( semLog, &reserver, 1);
+	std::cerr << message;
+	semop( semLog, &liberer, 1);
 }
