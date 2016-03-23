@@ -27,9 +27,8 @@
 //------------------------------------------------------------------ Types
 
 //---------------------------------------------------- Variables statiques
-static int descCanal;
-static void * parkingPtr;
-static int idSemBPP, idSemBPA, idSemGB, idSemidSemMP, idMemoirePartage;
+
+
 
 //------------------------------------------------------ Fonctions privées
 static void finVoiturier(int noSignal)
@@ -195,20 +194,21 @@ static void finTache(int numSignal)
 
 //////////////////////////////////////////////////////////////////  PUBLIC
 //---------------------------------------------------- Fonctions publiques
-void Sortie(int idSemBPP, int idSemBPA, int idSemGB, int idSemVA, int idSemNP, int idVA, int idNP)
+void Sortie(int idVA, int idNP)
 {
-    struct sigaction actionFinTache;
-    actionFinTache.sa_handler=finTache;
-    sigemptyset(&actionFinTache.sa_mask);
-    actionFinTache.sa_flags=0;
+    struct sigaction handlerUSR2;
+    handlerUSR2.sa_handler=finTache;
+    sigemptyset(&handlerUSR2.sa_mask);
+    handlerUSR2.sa_flags=0;
+    sigaction(SIGUSR2, &handlerUSR2, NULL);
 	
-	struct sigaction actionFinVoiturier;
-    actionFinVoiturier.sa_handler=finVoiturier;
+	struct sigaction handlerCHLD;
+    handlerCHLD.sa_handler=finVoiturier;
     sigemptyset(&actionFinVoiturier.sa_mask);
     actionFinVoiturier.sa_flags=0;
     
     sigaction(SIGCHILD, &actionFinVoiturier, NULL);
-    sigaction(SIGUSR2, &actionFinTache, NULL);
+    
     
     descCanal = open(CHEMIN_SORTIE, O_RDONLY);
     
