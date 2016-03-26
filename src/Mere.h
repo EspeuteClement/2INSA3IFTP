@@ -20,4 +20,9 @@ void ecrireLog(char const *message);
 // struct sembuf reserver;
 // struct sembuf liberer;
 
+// Implementation via macro du SA_RESTART vu que l'autre ne fonctionne
+// pas.
+#define MY_SA_RESTART(funct) while( (funct) == -1 && errno == EINTR);
+
+
 #endif

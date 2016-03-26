@@ -48,8 +48,6 @@ static void EnregisterHandlers();
 static void QuitterHandler(int sig);
 static void ChildHandler(int sig);
 
-
-
 //------------------------------------------------------------- Constantes
 
 //------------------------------------------------------ Variables fichier
@@ -122,7 +120,7 @@ static void EntreePhaseMoteur()
     for(;;)
     {
         // Eviter que le ChildHandler ne fasse sauter cette commande
-        while(msgrcv(msgFileVoiture, (void *) &v, sizeof(Voiture),0, 0)==-1);
+        MY_SA_RESTART(msgrcv(msgFileVoiture, (void *) &v, sizeof(Voiture),0, 0));
         
         // Dessiner la voiture
         DessinerVoitureBarriere((TypeBarriere) (idBariere+1),v.type);
@@ -132,37 +130,36 @@ static void EntreePhaseMoteur()
         parking->voituresEnAttente[idBariere].arrivee   = v.arrivee;
 
         // Si il n'y à plus de places disponibles
-        semop(semVoituresParking,&reserver, 0);
+        MY_SA_RESTART(semop(semVoituresParking,&reserver, 1));
         if (parking->placesLibres <= 0)
         {
-            // Metre la voiture en attente
-            //semop(semVoituresParking,&reserver, 0);
-            semop(semVoituresParking,&liberer, 0);
-
+            semop(semVoituresParking,&liberer, 1);
+            
+            sprintf(buff,"\t[[Entree n°%d]]\tParking plein, attente\n",idBariere);
+            ecrireLog(buff);
             // Attendre la sortie d'une nouvelle voiture
-            semctl (semOuvrirPortes, 0, SETVAL, 0);
-            //semop(semOuvrirPortes,&reserver, idBariere);
-            while(1)
-            {
 
-            };
+            struct sembuf reserverPorte = {idBariere, -1,0};
+            semctl (semOuvrirPortes, idBariere, SETVAL, 0);
+            MY_SA_RESTART(semop(semOuvrirPortes,&reserverPorte, 1));
         }
         else
         {
-            semop(semVoituresParking,&liberer, 0);
+            semop(semVoituresParking,&liberer, 1);
         }
-        semop(semVoituresParking,&reserver, 0);
+        MY_SA_RESTART(semop(semVoituresParking,&reserver, 1));
         parking->placesLibres --;
-        semop(semVoituresParking,&liberer, 0);
+        semop(semVoituresParking,&liberer, 1);
         
-        //Voiture voitureAInserer = new Voiture(parking->voituresEnAttente[idBariere]);
         pid_t pid = GarerVoiture((TypeBarriere) (idBariere+1));
         pidGarage.insert(std::pair<pid_t,Voiture>(pid, parking->voituresEnAttente[idBariere]) );
 
-        sprintf(buff,"Reception d'une voiture pour Entree n°%d\n",idBariere);
-        
-        sleep(1);
+        sprintf(buff,"\t[[Entree n°%d]]\tArrivée de la voiture n°%d\n",idBariere,parking->voituresEnAttente[idBariere].numero);
         ecrireLog(buff);
+
+        // Attente d'une seconde pour laisser passer la voiture
+        while(sleep(1) != 0);
+        
     }
 }
 
@@ -180,10 +177,9 @@ static void EntreePhaseDestruction()
 
     sigaction(SIGCHLD,&ignorer,NULL);
 
-
     for (std::pair<const int, Voiture> couple : pidGarage)
     {
-        // Dire aux process de se terminer
+        // Dire aux process fils de se terminer
         kill(couple.first, SIGUSR2);
     }
     shmdt(parking);
@@ -200,7 +196,6 @@ static void EnregisterHandlers()
 
     struct sigaction ChildSigaction;
     ChildSigaction.sa_handler = &ChildHandler;
-    ChildSigaction.sa_flags = SA_RESTART;
     sigaction(SIGCHLD,&ChildSigaction,NULL);
 }
 
@@ -214,12 +209,12 @@ static void QuitterHandler(int sig)
 
 static void ChildHandler(int sig)
 {
-    // Récuperer absolument tout les enfants qui ont terminé
+    
     int status;
     pid_t pid;
+    // Récuperer absolument tous les enfants qui ont exit
     while (( pid = waitpid(-1, &status, WNOHANG))>0) {
         int place = WEXITSTATUS(status);
-
         pidGarage.erase(pid);
         sprintf(buff,"\t[[Entree n°%d]]\tVoiture garée en place %d\n",idBariere,place);
         ecrireLog(buff);
