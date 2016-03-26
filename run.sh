@@ -8,16 +8,18 @@ ipcs > ipcsAvant.tmp
 ipcs -m > ipcsMAvant.tmp
 ipcs -q > ipcsQAvant.tmp
 ipcs -s > ipcsSAvant.tmp
-ps -u > psAvant.tmp
+ps -A -U `whoami` > psAvant.tmp
 
-$1 2> log.txt
+$1 2> log.log
 
 ipcs > ipcsApres.tmp
 ipcs -m > ipcsMApres.tmp
 ipcs -q > ipcsQApres.tmp
 ipcs -s > ipcsSApres.tmp
 
-ps -u > psApres.tmp
+ps -A -U `whoami` > psApres.tmp
+
+# Récuperer la liste des ipcs et process qui sont apparus
 diff -u psAvant.tmp psApres.tmp | grep -E "^\+0" > psDiff.tmp
 
 diff -u ipcsAvant.tmp ipcsApres.tmp | grep -E "^\+0" > ipcsDiff.tmp

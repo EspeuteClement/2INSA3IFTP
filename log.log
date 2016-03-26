@@ -1,10 +1,28 @@
-src/Entree.cpp: In function ‘int CreerEntree(TypeBarriere, int, int, int, int, int)’:
-src/Entree.cpp:38:48: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
-         ecrireLog("Process Creer Entree Fils\n");
-                                                ^
-Process Creer Entree Pere5549
-Process Creer Entree Fils
-Coucou
-Wtf
-Process Creer Entree Pere5550
-Process Creer Entree Fils
+Processus Entree crée avec pid : 28153
+Processus Entree crée avec pid : 28154
+	[[Entree n°0]]	Initialisation
+	[[Entree n°1]]	Initialisation
+Processus Entree crée avec pid : 28155
+	[[Entree n°2]]	Initialisation
+Reception d'une voiture pour Entree n°0
+Reception d'une voiture pour Entree n°2
+Reception d'une voiture pour Entree n°0
+Reception d'une voiture pour Entree n°2
+	[[Entree n°2]]	Voiture garée en place 7
+Reception d'une voiture pour Entree n°0
+Reception d'une voiture pour Entree n°2
+	[[Entree n°0]]	Voiture garée en place 4
+	[[Entree n°0]]	Voiture garée en place 4
+Reception d'une voiture pour Entree n°2
+	[[Entree n°0]]	Voiture garée en place 5
+	[[Entree n°2]]	Voiture garée en place 2
+	[[Entree n°2]]	Voiture garée en place 1
+	[[Entree n°0]]	Voiture garée en place 8
+	[[Entree n°0]]	Voiture garée en place 6
+	[[Entree n°2]]	Voiture garée en place 3
+	[[Entree n°0]]		SIGUSR2 recu
+	[[Entree n°0]]	Destruction
+	[[Entree n°1]]		SIGUSR2 recu
+	[[Entree n°1]]	Destruction
+	[[Entree n°2]]		SIGUSR2 recu
+	[[Entree n°2]]	Destruction
