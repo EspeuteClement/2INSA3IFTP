@@ -146,8 +146,9 @@ static void EntreePhaseMoteur()
             AfficherRequete((TypeBarriere) (idBariere+1), voitureBarriere.type, time(NULL));
             // Attendre la sortie d'une nouvelle voiture
 
-            struct sembuf reserverPorte = {idBariere, -1,0};
+            
             semctl (semOuvrirPortes, idBariere, SETVAL, 0);
+            struct sembuf reserverPorte = {(short unsigned int) idBariere, -1,0};
             MY_SA_RESTART(semop(semOuvrirPortes,&reserverPorte, 1));
         }
         else

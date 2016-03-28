@@ -56,7 +56,6 @@ static void MereDestruction();
 
 static int msgFilesVoiture[NOMBRE_FILE_VOITURE];
 static int semLog;
-static char buff[50];
 
 // ------- Ressources
 
