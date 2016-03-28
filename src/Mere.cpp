@@ -223,7 +223,7 @@ static void MereDestruction()
 
 void ecrireLog(char const *message)
 {
-	semop( semLog, &reserver, 0);
+	MY_SA_RESTART(semop( semLog, &reserver, 0));
 	std::cerr << message;
 	semop( semLog, &liberer, 0);
 }

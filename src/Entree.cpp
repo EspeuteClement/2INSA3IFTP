@@ -200,6 +200,7 @@ static void EntreePhaseDestruction()
     {
         // Dire aux process fils de se terminer
         kill(couple.first, SIGUSR2);
+        MY_SA_RESTART(waitpid(couple.first, NULL, 0));
     }
     shmdt(parking);
 
