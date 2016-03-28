@@ -133,7 +133,8 @@ static void finSortieVoiture(int numSignal)
 	ecrireLog(buff);
     semop(idSemMemPartagee, &opV, 1);
     pidSortie.erase(pid);
-}//-----Fin de finSortieVoiture
+}
+//-----Fin de finSortieVoiture
 
 
 static void finTache(int numSignal)
@@ -192,4 +193,5 @@ void Sortie(int idMP, int idFVS, int idSemMP, int idSemEnt)
 	{
 		Moteur();
 	}
-}//-----Fin de Sortie
+}
+//-----Fin de Sortie

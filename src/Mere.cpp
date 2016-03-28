@@ -219,7 +219,7 @@ static void MereDestruction()
 	// Liberer le sémaphore du ficher de log
 	semctl( semLog, 0,IPC_RMID, 0);
 }
-MY_SA_RESTART(semop(semVoituresParking,&reserver, 1));
+
 
 void ecrireLog(char const *message)
 {
