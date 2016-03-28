@@ -33,6 +33,7 @@ static int idMemoirePartagee;
 static int idFileVoitureSortie;
 static void * memPartagee;
 static int idSemMemPartagee;
+static int idSemEntree;
 
 //------------------------------------------------------ Fonctions privées
 static void finSortieVoiture(int numSignal)
@@ -43,7 +44,6 @@ static void finSortieVoiture(int numSignal)
     pid_t pidFille = wait(&status);
     unsigned int numS=WEXITSTATUS(status);
 
- 
     struct sembuf opP;
     opP.sem_num=0;
     opP.sem_op=-1;
@@ -54,7 +54,7 @@ static void finSortieVoiture(int numSignal)
     opV.sem_op=1;
     opV.sem_flg=0;
     
-    semop(idSemMP, &operationP, 1);
+    while(semop(idSemMP, &operationP, 1) ==-1 && errno==EINTR);
     Voiture uneVoiture = ((VoituresParking*)memPartagee)->voituresGarees[numS-1]；
     semop(idSemMP, &operationV, 1);   
     Effacer(numS);
@@ -62,44 +62,52 @@ static void finSortieVoiture(int numSignal)
 	Afficher(MESSAGE, "Une voiture vient de sortir");
 	AfficherSortie(uneVoiture.type,uneVoiture.numero,uneVoiture.arrivee,time(null));
 
-    semop(idSemMP, &operationP, 1);
+    while(semop(idSemMP, &operationP, 1) ==-1 && errno==EINTR);
     Voiture * lesVoitures = ((VoituresParking*)memPartagee)->voituresEnAttente;
 
 	if(lesVoitures[FILE_PROF_BP].type==PROF && lesVoitures[FILE_GB].type!=PROF)
 	{
-		//BPP
+		opV.sem_num=FILE_PROF_BP;
+		semop(idSemEntree,&operationV, 1);
 	}
 	else if(lesVoitures[FILE_PROF_BP].type==PROF && lesVoitures[FILE_GB].type==PROF)
 	{
 		if(lesVoitures[FILE_PROF_BP].arrivee <= lesVoitures[FILE_GB].arrivee)
 		{
-			//BPP
+			opV.sem_num=FILE_PROF_BP;
+			semop(idSemEntree,&operationV, 1);
 		}
 		else
 		{
-			//GB
+			opV.sem_num=FILE_GB;
+			semop(idSemEntree,&operationV, 1);
 		}
 	else if(lesVoitures[FILE_PROF_BP].type!=PROF && lesVoitures[FILE_GB].type==PROF)
 	{
-		//GB
+		opV.sem_num=FILE_GB;
+		semop(idSemEntree,&operationV, 1);
 	}
 	else if(lesVoitures[FILE_AUTRE_BP].type==AUTRE && lesVoitures[FILE_GB].type==AUTRE)
 	{
 		if(lesVoitures[FILE_AUTRE_BP].arrivee <= lesVoitures[FILE_GB].arrivee)
 		{
-			//BPA
+			opV.sem_num=FILE_AUTRE_BP;
+			semop(idSemEntree,&operationV, 1);
 		}
 		else
 		{
-			//GB
+			opV.sem_num=FILE_GB;
+			semop(idSemEntree,&operationV, 1);
 		}
 	else if(lesVoitures[FILE_AUTRE_BP].type==AUTRE && lesVoitures[FILE_GB].type==AUCUN)
 	{
-		//BP
+		opV.sem_num=FILE_AUTRE_BP;
+		semop(idSemEntree,&operationV, 1);
 	}
 	else if(lesVoitures[FILE_AUTRE_BP].type==AUCUN && lesVoitures[FILE_GB].type==AUTRE)
 	{
-		//GB
+		opV.sem_num=FILE_GB;
+		semop(idSemEntree,&operationV, 1);
 	}
     semop(idSemMP, &operationV, 1);
 }//-----Fin de finSortieVoiture
@@ -116,7 +124,7 @@ static void finTache(int numSignal)
 
 //////////////////////////////////////////////////////////////////  PUBLIC
 //---------------------------------------------------- Fonctions publiques
-void Sortie(int idMP, int idFVS, int idSemMP)
+void Sortie(int idMP, int idFVS, int idSemMP, int idSemEnt)
 {
     struct sigaction handlerUSR2;
     handlerUSR2.sa_handler=finTache;
@@ -133,6 +141,7 @@ void Sortie(int idMP, int idFVS, int idSemMP)
     idMemoirePartagee=idMP;
     idFileVoitureSortie=idFVS;
     idSemMemPartagee=idSemMP;
+    idSemEntree=idSemEnt;
     memPartagee=shmat(idMemoirePartagee,NULL,0);
     
     for(;;)
