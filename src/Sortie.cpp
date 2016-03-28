@@ -37,6 +37,7 @@ static int idFileVoitureSortie;
 static void * memPartagee;
 static int idSemMemPartagee;
 static int idSemEntree;
+static std::map<pid_t,int> pidSortie;
 
 //------------------------------------------------------ Fonctions privées
 static void finSortieVoiture(int numSignal)
@@ -131,6 +132,7 @@ static void finSortieVoiture(int numSignal)
 	opV.sem_num=0;
 	ecrireLog(buff);
     semop(idSemMemPartagee, &opV, 1);
+    pidSortie.erase(pid);
 }//-----Fin de finSortieVoiture
 
 
@@ -138,15 +140,20 @@ static void finTache(int numSignal)
 // Mode d'emploi :
 //
 {
+	for (std::pair<const int, int> children : pidSortie)
+    {
+        kill(children.first, SIGUSR2);
+    }
 	shmdt(memPartagee);
 	exit(0);
 }//-----Fin de finTache
 
 
-//////////////////////////////////////////////////////////////////  PUBLIC
-//---------------------------------------------------- Fonctions publiques
-void Sortie(int idMP, int idFVS, int idSemMP, int idSemEnt)
+static void Initialisation(int idMP, int idFVS, int idSemMP, int idSemEnt)
 {
+	sprintf(buff,"\t[[Sortie]]\tInitialisation\n");
+    ecrireLog(buff);
+    
     struct sigaction handlerUSR2;
     handlerUSR2.sa_handler=finTache;
     sigemptyset(&handlerUSR2.sa_mask);
@@ -165,16 +172,24 @@ void Sortie(int idMP, int idFVS, int idSemMP, int idSemEnt)
     idSemEntree=idSemEnt;
     memPartagee=shmat(idMemoirePartagee,NULL,0);
     
+}
+
+static void Moteur()
+{
+	msgInt numS = {0};
+    MY_SA_RESTART(msgrcv(idFileVoitureSortie, (void *) &numS, sizeof(msgInt),0,0));
+    pidSortie.insert(std::pair<pid_t,int>(pid, numS.numero));
+	SortirVoiture(numS.numero);
+}
+
+//////////////////////////////////////////////////////////////////  PUBLIC
+//---------------------------------------------------- Fonctions publiques
+void Sortie(int idMP, int idFVS, int idSemMP, int idSemEnt)
+{
+    Initialisation(int idMP, int idFVS, int idSemMP, int idSemEnt);
+    
     for(;;)
 	{
-        msgInt numS = {0};
-        MY_SA_RESTART(msgrcv(idFileVoitureSortie, (void *) &numS, sizeof(msgInt), 0,0));
-		
-		char buff[50];
-        sprintf(buff,"\t[[Sortie]]\tErreur %d\n",errno);
-        ecrireLog(buff);
-        //while(sleep(5)!=0);
-		SortirVoiture(numS.numero);
-
+		Moteur();
 	}
 }//-----Fin de Sortie
