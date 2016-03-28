@@ -150,24 +150,31 @@ static void EntreePhaseMoteur()
             semctl (semOuvrirPortes, idBariere, SETVAL, 0);
             struct sembuf reserverPorte = {(short unsigned int) idBariere, -1,0};
             MY_SA_RESTART(semop(semOuvrirPortes,&reserverPorte, 1));
+
+            Effacer((TypeZone)(REQUETE_R1 + idBariere));
         }
         else
         {
             semop(semVoituresParking,&liberer, 1);
         }
         voitureBarriere.arrivee = time(NULL);
+
+        sprintf(buff,"\t[[Entree n°%d]]\tArrivée de la voiture n°%d\n",idBariere,parking->voituresEnAttente[idBariere].numero);
+        ecrireLog(buff);
+
         MY_SA_RESTART(semop(semVoituresParking,&reserver, 1));
+
         parking->voituresEnAttente[idBariere].type      = AUCUN;
         parking->voituresEnAttente[idBariere].numero    = -1;
         parking->voituresEnAttente[idBariere].arrivee   = 0;
 
         parking->placesLibres --;
         pid_t pid = GarerVoiture((TypeBarriere) (idBariere+1));
+        
         pidGarage.insert(std::pair<pid_t,Voiture>(pid, voitureBarriere));
         semop(semVoituresParking,&liberer, 1);
 
-        sprintf(buff,"\t[[Entree n°%d]]\tArrivée de la voiture n°%d\n",idBariere,parking->voituresEnAttente[idBariere].numero);
-        ecrireLog(buff);
+
 
         // Attente d'une seconde pour laisser passer la voiture
         while(sleep(TEMPO) != 0);
@@ -208,6 +215,7 @@ static void EnregisterHandlers()
 
     struct sigaction ChildSigaction;
     ChildSigaction.sa_handler = &ChildHandler;
+    ChildSigaction.sa_flags = SA_RESTART | SA_NOCLDSTOP;
     sigaction(SIGCHLD,&ChildSigaction,NULL);
 }
 
@@ -225,10 +233,20 @@ static void ChildHandler(int sig)
     int status;
     pid_t pid;
     // Récuperer absolument tous les enfants qui ont exit
-    while (( pid = waitpid(-1, &status, WNOHANG))>0) {
+    while (( pid = waitpid((pid_t) -1, &status, WNOHANG))>0) {
         int place = WEXITSTATUS(status);
-        pidGarage.erase(pid);
+
+        Voiture* voiture = &(pidGarage[pid]);
+        AfficherPlace(place, voiture->type, voiture->numero, voiture->arrivee);
+        MY_SA_RESTART(semop(semVoituresParking,&reserver, 1));
+        parking->voituresGarees[place-1].type      = voiture->type;
+        parking->voituresGarees[place-1].numero    = voiture->numero;
+        parking->voituresGarees[place-1].arrivee   = voiture->arrivee;
+        semop(semVoituresParking,&liberer, 1);
+
         sprintf(buff,"\t[[Entree n°%d]]\tVoiture garée en place %d\n",idBariere,place);
         ecrireLog(buff);
+        pidGarage.erase(pid);
+        
     }
 }

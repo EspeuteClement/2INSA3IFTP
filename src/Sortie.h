@@ -16,6 +16,6 @@
 //////////////////////////////////////////////////////////////////  PUBLIC
 //---------------------------------------------------- Fonctions publiques
 
-void Sortie(int idVA, int idNP, int idFVS);
+void Sortie(int idMP, int idFVS, int idSemMP, int idSemEnt);
 
 #endif // SORTIE_H

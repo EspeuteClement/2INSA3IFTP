@@ -103,8 +103,8 @@ void Commande (char code , unsigned int valeur)
             break;
 
         case 'S' :
-            int numS = valeur;
-            msgsnd (idfileVoitureSortie, &numS, sizeof(int), 0);
+            msgInt numS = {valeur};
+            msgsnd (idfileVoitureSortie, &numS, sizeof(msgInt), 0);
             Effacer(MESSAGE);
 		 	Afficher(MESSAGE,"Une voiture vient de sortir");
 			break;

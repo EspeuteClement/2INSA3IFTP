@@ -4,6 +4,8 @@
 //-------------------------------------------------------- Include système
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/ipc.h>
+#include <sys/msg.h>
 #include <unistd.h>
 #include <time.h>
 #include <signal.h>
@@ -17,11 +19,12 @@
 #include <map>
 #include <iostream>
 //------------------------------------------------------ Include personnel
-#include "/public/tp/tp-multitache/Outils.h"
-#include "/public/tp/tp-multitache/Heure.h"
+#include "libs/Outils.h"
+#include "libs/Heure.h"
 #include "Mere.h"
 #include "Sortie.h"
 #include "Clavier.h"
+#include "Voiture.h"
 ///////////////////////////////////////////////////////////////////  PRIVE
 //------------------------------------------------------------- Constantes
 
@@ -54,62 +57,80 @@ static void finSortieVoiture(int numSignal)
     opV.sem_op=1;
     opV.sem_flg=0;
     
-    while(semop(idSemMP, &operationP, 1) ==-1 && errno==EINTR);
-    Voiture uneVoiture = ((VoituresParking*)memPartagee)->voituresGarees[numS-1]；
-    semop(idSemMP, &operationV, 1);   
-    Effacer(numS);
+    while(semop(idSemMemPartagee, &opP, 1) ==-1 && errno==EINTR);
+    Voiture uneVoiture = ((VoituresParking*)memPartagee)->voituresGarees[numS-1];
+    ((VoituresParking*)memPartagee)->placesLibres++;
+    semop(idSemMemPartagee, &opV, 1);   
+    Effacer((TypeZone)numS);
     Effacer(MESSAGE);
 	Afficher(MESSAGE, "Une voiture vient de sortir");
-	AfficherSortie(uneVoiture.type,uneVoiture.numero,uneVoiture.arrivee,time(null));
+	AfficherSortie(uneVoiture.type,uneVoiture.numero,uneVoiture.arrivee,time(NULL));
 
-    while(semop(idSemMP, &operationP, 1) ==-1 && errno==EINTR);
+    while(semop(idSemMemPartagee, &opP, 1) ==-1 && errno==EINTR);
     Voiture * lesVoitures = ((VoituresParking*)memPartagee)->voituresEnAttente;
 
+    char buff[50];
+    sprintf(buff,"\t[[Sortie]]\tPas de file ouverte\n");
 	if(lesVoitures[FILE_PROF_BP].type==PROF && lesVoitures[FILE_GB].type!=PROF)
 	{
 		opV.sem_num=FILE_PROF_BP;
-		semop(idSemEntree,&operationV, 1);
+		semop(idSemEntree,&opV, 1);
+
+
+        sprintf(buff,"\t[[Sortie]]\tOuvrir FILE_PROF_BP\n");
+
 	}
 	else if(lesVoitures[FILE_PROF_BP].type==PROF && lesVoitures[FILE_GB].type==PROF)
 	{
 		if(lesVoitures[FILE_PROF_BP].arrivee <= lesVoitures[FILE_GB].arrivee)
 		{
 			opV.sem_num=FILE_PROF_BP;
-			semop(idSemEntree,&operationV, 1);
+			semop(idSemEntree,&opV, 1);
+			sprintf(buff,"\t[[Sortie]]\tOuvrir FILE_PROF_BP\n");
 		}
 		else
 		{
 			opV.sem_num=FILE_GB;
-			semop(idSemEntree,&operationV, 1);
+			semop(idSemEntree,&opV, 1);
+			sprintf(buff,"\t[[Sortie]]\tOuvrir FILE_GB\n");
 		}
+	}
 	else if(lesVoitures[FILE_PROF_BP].type!=PROF && lesVoitures[FILE_GB].type==PROF)
 	{
 		opV.sem_num=FILE_GB;
-		semop(idSemEntree,&operationV, 1);
+		semop(idSemEntree,&opV, 1);
+		sprintf(buff,"\t[[Sortie]]\tOuvrir FILE_GB\n");
 	}
 	else if(lesVoitures[FILE_AUTRE_BP].type==AUTRE && lesVoitures[FILE_GB].type==AUTRE)
 	{
 		if(lesVoitures[FILE_AUTRE_BP].arrivee <= lesVoitures[FILE_GB].arrivee)
 		{
 			opV.sem_num=FILE_AUTRE_BP;
-			semop(idSemEntree,&operationV, 1);
+			semop(idSemEntree,&opV, 1);
+			sprintf(buff,"\t[[Sortie]]\tOuvrir FILE_AUTRE_BP\n");
 		}
 		else
 		{
 			opV.sem_num=FILE_GB;
-			semop(idSemEntree,&operationV, 1);
+			semop(idSemEntree,&opV, 1);
+			sprintf(buff,"\t[[Sortie]]\tOuvrir FILE_GB\n");
 		}
+	}
 	else if(lesVoitures[FILE_AUTRE_BP].type==AUTRE && lesVoitures[FILE_GB].type==AUCUN)
 	{
 		opV.sem_num=FILE_AUTRE_BP;
-		semop(idSemEntree,&operationV, 1);
+		semop(idSemEntree,&opV, 1);
+		sprintf(buff,"\t[[Sortie]]\tOuvrir FILE_AUTRE_BP\n");
 	}
 	else if(lesVoitures[FILE_AUTRE_BP].type==AUCUN && lesVoitures[FILE_GB].type==AUTRE)
 	{
 		opV.sem_num=FILE_GB;
-		semop(idSemEntree,&operationV, 1);
+		sprintf(buff,"\t[[Sortie]]\tOuvrir FILE_GB\n");
+		semop(idSemEntree,&opV, 1);
 	}
-    semop(idSemMP, &operationV, 1);
+	opV.sem_num=0;
+	ecrireLog(buff);
+    semop(idSemMemPartagee, &opV, 1);
 }//-----Fin de finSortieVoiture
 
 
@@ -136,7 +157,7 @@ void Sortie(int idMP, int idFVS, int idSemMP, int idSemEnt)
     handlerCHLD.sa_handler=finSortieVoiture;
     sigemptyset(&handlerCHLD.sa_mask);
     handlerCHLD.sa_flags=0;  
-    sigaction(SIGCHILD, &actionFinVoiturier, NULL);
+    sigaction(SIGCHLD, &handlerCHLD, NULL);
     
     idMemoirePartagee=idMP;
     idFileVoitureSortie=idFVS;
@@ -146,8 +167,14 @@ void Sortie(int idMP, int idFVS, int idSemMP, int idSemEnt)
     
     for(;;)
 	{
-        int numS;
-        msgrcv (idFileVoitureSortie, &numS, sizeof(int), 0);
-		SortirVoiture(numS);
+        msgInt numS = {0};
+        MY_SA_RESTART(msgrcv(idFileVoitureSortie, (void *) &numS, sizeof(msgInt), 0,0));
+		
+		char buff[50];
+        sprintf(buff,"\t[[Sortie]]\tErreur %d\n",errno);
+        ecrireLog(buff);
+        //while(sleep(5)!=0);
+		SortirVoiture(numS.numero);
+
 	}
 }//-----Fin de Sortie

@@ -32,6 +32,7 @@ using namespace std;
 #include "Entree.h"
 #include "Clavier.h"
 #include "Voiture.h"
+#include "Sortie.h"
 //------------------------------------------------------------- Constantes
 //----------------------------------------------------------- Types privés
 
@@ -80,6 +81,8 @@ static pid_t pidClavier;		// Tâche Clavier
 static pid_t pidEntrees[NOMBRE_FILE_VOITURE] = {-1};
 								// Tâches Entree
 static pid_t pidHeure;			// Pid de l'affichage de l'Heure
+static pid_t pidSortie;
+
 
 // Tâche principale du programme
 int main()
@@ -132,7 +135,7 @@ static void MereInitialisation()
 	semOuvrirPortes = semget(IPC_PRIVATE, NOMBRE_FILE_VOITURE, IPC_CREAT | IPC_EXCL | DROITS_SEM) ;
 
 	// Boite au lettre pour sortie
-	msgRequeteSortie = msgget (IPC_PRIVATE, IPC_CREAT | IPC_EXCL);
+	msgRequeteSortie = msgget (IPC_PRIVATE, IPC_CREAT | IPC_EXCL | DROITS_MSG);
 
 	// Zone mémoire pour VoituresParking
 	shmVoituresParking = shmget (IPC_PRIVATE, sizeof(VoituresParking), IPC_CREAT | IPC_EXCL | DROITS_SHM);
@@ -150,6 +153,11 @@ static void MereInitialisation()
 	if ((pidClavier = fork()) == 0 )
 	{
 		Clavier(msgFilesVoiture, msgRequeteSortie);
+	}
+
+	if ((pidSortie = fork()) == 0)
+	{
+		Sortie(shmVoituresParking, msgRequeteSortie, semVoituresParking, semOuvrirPortes);
 	}
 
 	// Taches entrée
@@ -178,6 +186,10 @@ static void MereDestruction()
 		kill(pidEntrees[entree],SIGUSR2);
 		waitpid(pidEntrees[entree], NULL, 0);
 	}
+
+	// Terminer sortie
+	kill(pidSortie, SIGUSR2);
+	waitpid(pidSortie,NULL,0);
 
 	// Terminer Heure
 	kill(pidHeure,SIGUSR2);

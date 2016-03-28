@@ -19,5 +19,9 @@
 void Clavier (int *filVoitureEntree, int filVoitureSortie);
 void Commande (char code , unsigned int valeur);
 
+typedef struct  {
+	int numero;
+} msgInt;
+
 #endif // CLAVIER_H
 

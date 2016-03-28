@@ -1,11 +1,19 @@
-Processus Entree crée avec pid : 14542
-Processus Entree crée avec pid : 14543
+Processus Entree crée avec pid : 18395
+Processus Entree crée avec pid : 18396
 	[[Entree n°0]]	Initialisation
+Processus Entree crée avec pid : 18397
 	[[Entree n°1]]	Initialisation
-Processus Entree crée avec pid : 14544
 	[[Entree n°2]]	Initialisation
-	[[Entree n°0]]	Arrivée de la voiture n°-1
-	[[Entree n°0]]	Voiture garée en place 4
+	[[Entree n°0]]	Arrivée de la voiture n°1
+	[[Entree n°0]]	Arrivée de la voiture n°2
+	[[Entree n°1]]	Arrivée de la voiture n°3
+	[[Entree n°2]]	Arrivée de la voiture n°4
+	[[Entree n°1]]	Arrivée de la voiture n°5
+	[[Entree n°2]]	Arrivée de la voiture n°6
+	[[Entree n°2]]	Voiture garée en place 6
+	[[Entree n°2]]	Voiture garée en place 7
+	[[Entree n°0]]	Voiture garée en place 8
+	[[Entree n°0]]	Voiture garée en place 5
 	[[Entree n°0]]		SIGUSR2 recu
 	[[Entree n°0]]	Destruction
 	[[Entree n°1]]		SIGUSR2 recu

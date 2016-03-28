@@ -17,7 +17,7 @@ ipcs -m > ipcsMApres.tmp
 ipcs -q > ipcsQApres.tmp
 ipcs -s > ipcsSApres.tmp
 
-ps -A -U `whoami` > psApres.tmp
+ps -A -U `whoami` | grep "Parking"> psApres.tmp
 
 # Récuperer la liste des ipcs et process qui sont apparus
 diff -u psAvant.tmp psApres.tmp | grep -E "^\+0" > psDiff.tmp
@@ -50,7 +50,7 @@ else
 	esac
 fi
 
-if [ "`cat psDiff.tmp | wc -l`" -eq "0" ]; then
+if [ "`cat psApres.tmp | wc -l`" -eq "0" ]; then
 	printf "Aucune fuite de processus detectée\n------------------\n"
 else
 	printf "Attention, fuite de processus detectée !\n------------------\n"
