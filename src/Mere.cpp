@@ -186,7 +186,7 @@ static void MereDestruction()
 		kill(pidEntrees[entree],SIGUSR2);
 		waitpid(pidEntrees[entree], NULL, 0);
 	}
-
+	
 	// Terminer sortie
 	kill(pidSortie, SIGUSR2);
 	waitpid(pidSortie,NULL,0);
@@ -219,6 +219,7 @@ static void MereDestruction()
 	// Liberer le sémaphore du ficher de log
 	semctl( semLog, 0,IPC_RMID, 0);
 }
+MY_SA_RESTART(semop(semVoituresParking,&reserver, 1));
 
 void ecrireLog(char const *message)
 {
