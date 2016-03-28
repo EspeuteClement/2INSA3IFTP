@@ -38,6 +38,7 @@ static void * memPartagee;
 static int idSemMemPartagee;
 static int idSemEntree;
 static std::map<pid_t,int> pidSortie;
+static char buff[60];
 
 //------------------------------------------------------ Fonctions privées
 static void finSortieVoiture(int numSignal)
@@ -179,8 +180,8 @@ static void Moteur()
 {
 	msgInt numS = {0};
     MY_SA_RESTART(msgrcv(idFileVoitureSortie, (void *) &numS, sizeof(msgInt),0,0));
-    pidSortie.insert(std::pair<pid_t,int>(pid, numS.numero));
-	SortirVoiture(numS.numero);
+	pid_t pid = SortirVoiture(numS.numero);
+	pidSortie.insert(std::pair<pid_t,int>(pid, numS.numero));
 }
 
 //////////////////////////////////////////////////////////////////  PUBLIC
