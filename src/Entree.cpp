@@ -72,7 +72,10 @@ static sembuf reserver = {0,-1,0};
 static sembuf liberer  = {0,1,0};
 //-------------------------------------------------------------- Fonctions
 
+//---------------------------------------------- Define Constantes
+#define TEMPO 1
 
+//----------------------------------------------------- Corps des methodes
 
 int CreerEntree(TypeBarriere bariere, 
                 int _shmVoituresParking, 
@@ -116,27 +119,31 @@ static void EntreePhaseInitialisation()
 
 static void EntreePhaseMoteur()
 {
-    Voiture v = {AUCUN,0,0};
+    Voiture voitureBarriere = {AUCUN,0,0};
     for(;;)
     {
         // Eviter que le ChildHandler ne fasse sauter cette commande
-        MY_SA_RESTART(msgrcv(msgFileVoiture, (void *) &v, sizeof(Voiture),0, 0));
+        MY_SA_RESTART(msgrcv(msgFileVoiture, (void *) &voitureBarriere, sizeof(Voiture),0, 0));
         
         // Dessiner la voiture
-        DessinerVoitureBarriere((TypeBarriere) (idBariere+1),v.type);
-        
-        parking->voituresEnAttente[idBariere].type      = v.type;
-        parking->voituresEnAttente[idBariere].numero    = v.numero;
-        parking->voituresEnAttente[idBariere].arrivee   = v.arrivee;
+        DessinerVoitureBarriere((TypeBarriere) (idBariere+1),voitureBarriere.type);
+        voitureBarriere.arrivee = time(NULL);
+        MY_SA_RESTART(semop(semVoituresParking,&reserver, 1));
+        parking->voituresEnAttente[idBariere].type      = voitureBarriere.type;
+        parking->voituresEnAttente[idBariere].numero    = voitureBarriere.numero;
+        parking->voituresEnAttente[idBariere].arrivee   = voitureBarriere.arrivee;
 
         // Si il n'y à plus de places disponibles
-        MY_SA_RESTART(semop(semVoituresParking,&reserver, 1));
         if (parking->placesLibres <= 0)
         {
             semop(semVoituresParking,&liberer, 1);
             
             sprintf(buff,"\t[[Entree n°%d]]\tParking plein, attente\n",idBariere);
             ecrireLog(buff);
+            
+            // Afficher la requête dans l'interface
+
+            AfficherRequete((TypeBarriere) (idBariere+1), voitureBarriere.type, time(NULL));
             // Attendre la sortie d'une nouvelle voiture
 
             struct sembuf reserverPorte = {idBariere, -1,0};
@@ -147,18 +154,22 @@ static void EntreePhaseMoteur()
         {
             semop(semVoituresParking,&liberer, 1);
         }
+        voitureBarriere.arrivee = time(NULL);
         MY_SA_RESTART(semop(semVoituresParking,&reserver, 1));
+        parking->voituresEnAttente[idBariere].type      = AUCUN;
+        parking->voituresEnAttente[idBariere].numero    = -1;
+        parking->voituresEnAttente[idBariere].arrivee   = 0;
+
         parking->placesLibres --;
-        semop(semVoituresParking,&liberer, 1);
-        
         pid_t pid = GarerVoiture((TypeBarriere) (idBariere+1));
-        pidGarage.insert(std::pair<pid_t,Voiture>(pid, parking->voituresEnAttente[idBariere]) );
+        pidGarage.insert(std::pair<pid_t,Voiture>(pid, voitureBarriere));
+        semop(semVoituresParking,&liberer, 1);
 
         sprintf(buff,"\t[[Entree n°%d]]\tArrivée de la voiture n°%d\n",idBariere,parking->voituresEnAttente[idBariere].numero);
         ecrireLog(buff);
 
         // Attente d'une seconde pour laisser passer la voiture
-        while(sleep(1) != 0);
+        while(sleep(TEMPO) != 0);
         
     }
 }

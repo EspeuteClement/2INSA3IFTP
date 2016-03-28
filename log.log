@@ -1,11 +1,28 @@
-Processus Entree crée avec pid : 29758
-Processus Entree crée avec pid : 29759
+Processus Entree crée avec pid : 2918
+Processus Entree crée avec pid : 2919
 	[[Entree n°0]]	Initialisation
-Processus Entree crée avec pid : 29760
 	[[Entree n°1]]	Initialisation
+Processus Entree crée avec pid : 2920
 	[[Entree n°2]]	Initialisation
-	[[Entree n°0]]	Arrivée de la voiture n°1
-	[[Entree n°0]]	Voiture garée en place 7
+	[[Entree n°0]]	Arrivée de la voiture n°-1
+	[[Entree n°0]]	Arrivée de la voiture n°-1
+	[[Entree n°2]]	Arrivée de la voiture n°-1
+	[[Entree n°0]]	Arrivée de la voiture n°-1
+	[[Entree n°2]]	Arrivée de la voiture n°-1
+	[[Entree n°0]]	Arrivée de la voiture n°-1
+	[[Entree n°0]]	Voiture garée en place 6
+	[[Entree n°2]]	Arrivée de la voiture n°-1
+	[[Entree n°2]]	Voiture garée en place 7
+	[[Entree n°0]]	Voiture garée en place 1
+	[[Entree n°0]]	Voiture garée en place 5
+	[[Entree n°2]]	Voiture garée en place 2
+	[[Entree n°0]]	Arrivée de la voiture n°-1
+	[[Entree n°0]]	Voiture garée en place 8
+	[[Entree n°0]]	Voiture garée en place 3
+	[[Entree n°0]]	Parking plein, attente
+	[[Entree n°2]]	Voiture garée en place 4
+	[[Entree n°1]]	Parking plein, attente
+	[[Entree n°2]]	Parking plein, attente
 	[[Entree n°0]]		SIGUSR2 recu
 	[[Entree n°0]]	Destruction
 	[[Entree n°1]]		SIGUSR2 recu

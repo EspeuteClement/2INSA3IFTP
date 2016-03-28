@@ -27,6 +27,7 @@ using namespace std;
 //------------------------------------------------------ Include personnel
 #include "Mere.h"
 #include "libs/Outils.h"
+#include "libs/Heure.h"
 #include "Config.h"
 #include "Entree.h"
 #include "Clavier.h"
@@ -79,6 +80,7 @@ static VoituresParking *ptrVoituresParking;
 static pid_t pidClavier;		// Tâche Clavier 
 static pid_t pidEntrees[NOMBRE_FILE_VOITURE] = {-1};
 								// Tâches Entree
+static pid_t pidHeure;			// Pid de l'affichage de l'Heure
 
 // Tâche principale du programme
 int main()
@@ -157,6 +159,9 @@ static void MereInitialisation()
 		pidEntrees[entree] = CreerEntree(AUCUNE,shmVoituresParking,semVoituresParking,msgFilesVoiture[entree],semOuvrirPortes,entree);
 	}
 
+	// Tache Heure
+	pidHeure = ActiverHeure();
+
 	// ------------------------------------------------------- Phase moteur
 }
 
@@ -174,6 +179,10 @@ static void MereDestruction()
 		kill(pidEntrees[entree],SIGUSR2);
 		waitpid(pidEntrees[entree], NULL, 0);
 	}
+
+	// Terminer Heure
+	kill(pidHeure,SIGUSR2);
+	waitpid(pidHeure, NULL, 0);
 
 	// ------------------------------- Liberer les ressources partagées :
 
