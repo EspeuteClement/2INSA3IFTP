@@ -30,7 +30,7 @@
          semOuvrirPortes
 * @return Le pid de la tâche Entree qui a été crée.
 */
-int CreerEntree(TypeBarriere bariere, 
+int CreerEntree( 
                 int shmComptePlacesLibres, 
                 int semComptePlacesLibres, 
                 int fileVoiture,

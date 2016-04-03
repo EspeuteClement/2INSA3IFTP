@@ -77,7 +77,7 @@ static sembuf liberer  = {0,1,0};
 
 //----------------------------------------------------- Corps des methodes
 
-int CreerEntree(TypeBarriere bariere, 
+int CreerEntree(
                 int _shmVoituresParking, 
                 int _semVoituresParking, 
                 int _msgFileVoiture,
@@ -129,13 +129,12 @@ static void EntreePhaseMoteur()
         DessinerVoitureBarriere((TypeBarriere) (idBariere+1),voitureBarriere.type);
         voitureBarriere.arrivee = time(NULL);
         MY_SA_RESTART(semop(semVoituresParking,&reserver, 1));
-        parking->voituresEnAttente[idBariere].type      = voitureBarriere.type;
-        parking->voituresEnAttente[idBariere].numero    = voitureBarriere.numero;
-        parking->voituresEnAttente[idBariere].arrivee   = voitureBarriere.arrivee;
-
         // Si il n'y à plus de places disponibles
         if (parking->placesLibres <= 0)
         {
+            parking->voituresEnAttente[idBariere].type      = voitureBarriere.type;
+            parking->voituresEnAttente[idBariere].numero    = voitureBarriere.numero;
+            parking->voituresEnAttente[idBariere].arrivee   = voitureBarriere.arrivee;
             semop(semVoituresParking,&liberer, 1);
             
             sprintf(buff,"\t[[Entree n°%d]]\tParking plein, attente\n",idBariere);
@@ -146,12 +145,14 @@ static void EntreePhaseMoteur()
             AfficherRequete((TypeBarriere) (idBariere+1), voitureBarriere.type, time(NULL));
             // Attendre la sortie d'une nouvelle voiture
 
-            
-            semctl (semOuvrirPortes, idBariere, SETVAL, 0);
             struct sembuf reserverPorte = {(short unsigned int) idBariere, -1,0};
             MY_SA_RESTART(semop(semOuvrirPortes,&reserverPorte, 1));
 
+            //struct sembuf libererPorte = {(short unsigned int) idBariere, 1,0};
+            semctl (semOuvrirPortes, idBariere, SETVAL, 0);
             Effacer((TypeZone)(REQUETE_R1 + idBariere));
+
+
         }
         else
         {
@@ -163,15 +164,15 @@ static void EntreePhaseMoteur()
         ecrireLog(buff);
 
         MY_SA_RESTART(semop(semVoituresParking,&reserver, 1));
-
         parking->voituresEnAttente[idBariere].type      = AUCUN;
         parking->voituresEnAttente[idBariere].numero    = -1;
         parking->voituresEnAttente[idBariere].arrivee   = 0;
-
         parking->placesLibres --;
         pid_t pid = GarerVoiture((TypeBarriere) (idBariere+1));
-        
-        pidGarage.insert(std::pair<pid_t,Voiture>(pid, voitureBarriere));
+        if (pid > 0)
+        {
+            pidGarage.insert(std::pair<pid_t,Voiture>(pid, voitureBarriere));
+        }
         semop(semVoituresParking,&liberer, 1);
 
 
@@ -236,8 +237,9 @@ static void ChildHandler(int sig)
     // Récuperer absolument tous les enfants qui ont exit
     while (( pid = waitpid((pid_t) -1, &status, WNOHANG))>0) {
         int place = WEXITSTATUS(status);
-
         Voiture* voiture = &(pidGarage[pid]);
+
+        
         AfficherPlace(place, voiture->type, voiture->numero, voiture->arrivee);
         MY_SA_RESTART(semop(semVoituresParking,&reserver, 1));
         parking->voituresGarees[place-1].type      = voiture->type;

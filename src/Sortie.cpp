@@ -133,7 +133,7 @@ static void finSortieVoiture(int numSignal)
 	opV.sem_num=0;
 	ecrireLog(buff);
     semop(idSemMemPartagee, &opV, 1);
-    pidSortie.erase(pid);
+    pidSortie.erase(pidFille);
 }
 //-----Fin de finSortieVoiture
 
@@ -181,14 +181,16 @@ static void Moteur()
 	msgInt numS = {0};
     MY_SA_RESTART(msgrcv(idFileVoitureSortie, (void *) &numS, sizeof(msgInt),0,0));
 	pid_t pid = SortirVoiture(numS.numero);
-	pidSortie.insert(std::pair<pid_t,int>(pid, numS.numero));
+	if (pid > 0){
+		pidSortie.insert(std::pair<pid_t,int>(pid, numS.numero));
+	}
 }
 
 //////////////////////////////////////////////////////////////////  PUBLIC
 //---------------------------------------------------- Fonctions publiques
 void Sortie(int idMP, int idFVS, int idSemMP, int idSemEnt)
 {
-    Initialisation(int idMP, int idFVS, int idSemMP, int idSemEnt);
+    Initialisation(idMP, idFVS, idSemMP, idSemEnt);
     
     for(;;)
 	{

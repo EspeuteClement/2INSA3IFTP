@@ -28,7 +28,6 @@ using namespace std;
 #include "Mere.h"
 #include "libs/Outils.h"
 #include "libs/Heure.h"
-#include "Config.h"
 #include "Entree.h"
 #include "Clavier.h"
 #include "Voiture.h"
@@ -57,6 +56,7 @@ static void MereDestruction();
 
 static int msgFilesVoiture[NOMBRE_FILE_VOITURE];
 static int semLog;
+static char buff[55];
 
 // ------- Ressources
 
@@ -101,21 +101,28 @@ static void MereInitialisation()
 	semLog = semget (IPC_PRIVATE, 1, IPC_CREAT | IPC_EXCL | DROITS_SEM);
 	semctl (semLog, 0, SETVAL, 1);
 
+	sprintf(buff,"\t[[Mere]]\tInitialiserApplicatio()\n");
+    ecrireLog(buff);
+
 	InitialiserApplication(XTERM);
 
+	sprintf(buff,"\t[[Mere]]Mise en place des signaux\t\n");
+    ecrireLog(buff);
 	// Masquer les signaux :
 	struct sigaction ignorer;
 	ignorer.sa_handler = SIG_IGN;
 	sigemptyset(&ignorer.sa_mask);
 	ignorer.sa_flags = 0;
 
-	// Pour éviter qu'on puisse CTRL-C le programme
+	// Désactiver les interruptions indésirables
 	sigaction(SIGINT, &ignorer, NULL);
-
 	sigaction(SIGUSR2,&ignorer, NULL);
+	sigaction(SIGCHLD,&ignorer, NULL);
 
 	// ---------------------------------- Créer les ressources partagées :
 
+	sprintf(buff,"\t[[Mere]]\tCreation des BaL\n");
+    ecrireLog(buff);
 	// Boites aux lettres files voitures:
 
 	for (unsigned int file = 0; file < NOMBRE_FILE_VOITURE; file ++)
@@ -131,30 +138,42 @@ static void MereInitialisation()
 		}
 	}
 
+	sprintf(buff,"\t[[Mere]]Création Sémaphore OuvrirPortes\t\n");
+    ecrireLog(buff);
 	// Sémaphores pour l'ouverture des portes
 	semOuvrirPortes = semget(IPC_PRIVATE, NOMBRE_FILE_VOITURE, IPC_CREAT | IPC_EXCL | DROITS_SEM) ;
+	for (int idBariere = 0; idBariere < NOMBRE_FILE_VOITURE; ++idBariere)
+	{
+		semctl (semOuvrirPortes, idBariere, SETVAL, 0);
+	}
 
+
+	sprintf(buff,"\t[[Mere]]Création BaL RequeteSortie\t\n");
+    ecrireLog(buff);
 	// Boite au lettre pour sortie
 	msgRequeteSortie = msgget (IPC_PRIVATE, IPC_CREAT | IPC_EXCL | DROITS_MSG);
 
 	// Zone mémoire pour VoituresParking
+	sprintf(buff,"\t[[Mere]]Création Mémoire VoituresParking\t\n");
+    ecrireLog(buff);
 	shmVoituresParking = shmget (IPC_PRIVATE, sizeof(VoituresParking), IPC_CREAT | IPC_EXCL | DROITS_SHM);
 	semVoituresParking = semget (IPC_PRIVATE, 1, IPC_CREAT | IPC_EXCL | DROITS_SEM);
-
+	semctl(semVoituresParking, 0, SETVAL, 1);
+	
 	// Initialisation de VoituresParking
+	sprintf(buff,"\t[[Mere]]Création Pointeur VoituresParking\t\n");
+    ecrireLog(buff);
 	ptrVoituresParking = (VoituresParking*) shmat(shmVoituresParking, NULL, 0);
 
 	ptrVoituresParking->placesLibres = NB_PLACES;
 
-	semctl(semVoituresParking, 0, SETVAL, 1);
+
 
 	// --------------------------------------------------- Lancer les tâches
-	// Tâche clavier
-	if ((pidClavier = fork()) == 0 )
-	{
-		Clavier(msgFilesVoiture, msgRequeteSortie);
-	}
 
+
+	sprintf(buff,"\t[[Mere]]Lancer Tâche Sortie\t\n");
+    ecrireLog(buff);
 	if ((pidSortie = fork()) == 0)
 	{
 		Sortie(shmVoituresParking, msgRequeteSortie, semVoituresParking, semOuvrirPortes);
@@ -163,11 +182,21 @@ static void MereInitialisation()
 	// Taches entrée
 	for (int entree = 0; entree < NOMBRE_FILE_VOITURE; entree ++)
 	{
-		pidEntrees[entree] = CreerEntree(AUCUNE,shmVoituresParking,semVoituresParking,msgFilesVoiture[entree],semOuvrirPortes,entree);
+		pidEntrees[entree] = CreerEntree(shmVoituresParking,semVoituresParking,msgFilesVoiture[entree],semOuvrirPortes,entree);
 	}
 
+	sprintf(buff,"\t[[Mere]]Lancer Tâche Heure\t\n");
+    ecrireLog(buff);
 	// Tache Heure
 	pidHeure = ActiverHeure();
+
+	// Tâche clavier
+	sprintf(buff,"\t[[Mere]]Lancer Tâche clavier\t\n");
+    ecrireLog(buff);
+	if ((pidClavier = fork()) == 0 )
+	{
+		Clavier(msgFilesVoiture, msgRequeteSortie);
+	}
 
 	// ------------------------------------------------------- Phase moteur
 }
@@ -175,7 +204,9 @@ static void MereInitialisation()
 static void MereMoteur()
 {
 	// Attendre la fin du clavier
-	waitpid( pidClavier, NULL, 0);
+	sprintf(buff,"\t[[Mere]]Attente fin clavier\t\n");
+    ecrireLog(buff);
+	MY_SA_RESTART(waitpid( pidClavier, NULL, 0));
 }
 
 static void MereDestruction()
@@ -187,33 +218,50 @@ static void MereDestruction()
 		waitpid(pidEntrees[entree], NULL, 0);
 	}
 	
+
 	// Terminer sortie
+	sprintf(buff,"\t[[Mere]]Détruire Sortie\t\n");
+    ecrireLog(buff);
 	kill(pidSortie, SIGUSR2);
 	waitpid(pidSortie,NULL,0);
 
 	// Terminer Heure
+
+	sprintf(buff,"\t[[Mere]]Détruire Heure\t\n");
+    ecrireLog(buff);
 	kill(pidHeure,SIGUSR2);
 	waitpid(pidHeure, NULL, 0);
 
 	// ------------------------------- Liberer les ressources partagées :
 
 	// Boites aux lettres files voitures
+	sprintf(buff,"\t[[Mere]]Liberer BaL FilesVoiture\t\n");
+    ecrireLog(buff);
 	for (int file = 0; file < NOMBRE_FILE_VOITURE; file ++)
 	{
 		msgctl (msgFilesVoiture[file], IPC_RMID, 0);
 	}
 
 	// Sémaphores pour l'ouverture des portes
+	sprintf(buff,"\t[[Mere]]Liberer OuvrirPortes\n");
+    ecrireLog(buff);
 	semctl(semOuvrirPortes,0, IPC_RMID,0);
 
 	// Boite aux lettres pour sortie
+	sprintf(buff,"\t[[Mere]]Détruire RequeteSortie\t\n");
+    ecrireLog(buff);
 	msgctl (msgRequeteSortie, IPC_RMID, 0);
 
 	// Zone mémoire pour ComptePlacesLibres
-	shmctl (shmVoituresParking, IPC_RMID, 0);
+	sprintf(buff,"\t[[Mere]]Détruire ComptePlacesLibres\t\n");
+    ecrireLog(buff);
 	semctl (semVoituresParking, IPC_RMID, 0);
+	shmctl (shmVoituresParking, IPC_RMID, 0);
+
 
 	// Achever l'application
+	sprintf(buff,"\t[[Mere]]TerminerApplication()\t\n");
+    ecrireLog(buff);
 	TerminerApplication(true);
 
 	// Liberer le sémaphore du ficher de log
