@@ -32,23 +32,37 @@
 
 //---------------------------------------------------- Variables statiques
 
+//Memoire partagee qui stocke les voitures dans le parking, le nombre de
+//places disponibles et les requetes
 static int idMemoirePartagee;
+//Boite aux lettres par laquelle Clavier passe le numero de voiture qui
+//veut sortir
 static int idFileVoitureSortie;
+
 static void * memPartagee;
+
+//Semaphore pour la memoire partagee indiquee ci-dessus
 static int idSemMemPartagee;
+//Tableau de semaphore pour indiquer la permission d'entree de la
+//voiture en requete d'une entree 
 static int idSemEntree;
+
 static std::map<pid_t,int> pidSortie;
+
 static char buff[60];
 
 //------------------------------------------------------ Fonctions privées
 static void finSortieVoiture(int numSignal)
-// Mode d'emploi :
+// Algorithme : la methode appelee quand on recoit un SIGCHLD venu d'une
+//              fille
 //
 {
+	//La fille renvoie le numero de place de la voiture sortie
     int status;
     pid_t pidFille = wait(&status);
     unsigned int numS=WEXITSTATUS(status);
 
+	//Etablir les operations necessaires des semaphores
     struct sembuf opP;
     opP.sem_num=0;
     opP.sem_op=-1;
@@ -59,20 +73,30 @@ static void finSortieVoiture(int numSignal)
     opV.sem_op=1;
     opV.sem_flg=0;
     
+    //Eviter que handlerCHLD ne fasse sauter cette commande
     while(semop(idSemMemPartagee, &opP, 1) ==-1 && errno==EINTR);
+    //Recuperer la voiture sortie
     Voiture uneVoiture = ((VoituresParking*)memPartagee)->voituresGarees[numS-1];
+    //Incrementer le nombre de places disponibles
     ((VoituresParking*)memPartagee)->placesLibres++;
     semop(idSemMemPartagee, &opV, 1);   
+    
+    //Renouveler des messages sur l'ecran
     Effacer((TypeZone)numS);
     Effacer(MESSAGE);
 	Afficher(MESSAGE, "Une voiture vient de sortir");
 	AfficherSortie(uneVoiture.type,uneVoiture.numero,uneVoiture.arrivee,time(NULL));
 
-    while(semop(idSemMemPartagee, &opP, 1) ==-1 && errno==EINTR);
-    Voiture * lesVoitures = ((VoituresParking*)memPartagee)->voituresEnAttente;
 
+    while(semop(idSemMemPartagee, &opP, 1) ==-1 && errno==EINTR);
+    //Prendre le tableau des voitures en attente
+    Voiture * lesVoitures = ((VoituresParking*)memPartagee)->voituresEnAttente;
+    
     char buff[50];
     sprintf(buff,"\t[[Sortie]]\tPas de file ouverte\n");
+    
+    //Choisir la voiture la plus prioritaire et envoyer un message a
+    //l'entree correspondante
 	if(lesVoitures[FILE_PROF_BP].type==PROF && lesVoitures[FILE_GB].type!=PROF)
 	{
 		opV.sem_num=FILE_PROF_BP;
@@ -133,19 +157,24 @@ static void finSortieVoiture(int numSignal)
 	opV.sem_num=0;
 	ecrireLog(buff);
     semop(idSemMemPartagee, &opV, 1);
+    
+    //Effacer ce processus de la liste de destruction
     pidSortie.erase(pidFille);
 }
 //-----Fin de finSortieVoiture
 
 
 static void finTache(int numSignal)
-// Mode d'emploi :
+// Algorithme : la methode appelee quand on recoit un SIGUSR2 venu
+//              de la mere
 //
 {
+	//Terminer toutes les filles en train d'executer
 	for (std::pair<const int, int> children : pidSortie)
     {
         kill(children.first, SIGUSR2);
     }
+    //Detacher la memoire partagee
 	shmdt(memPartagee);
 	exit(0);
 }//-----Fin de finTache
@@ -153,9 +182,12 @@ static void finTache(int numSignal)
 
 static void Initialisation(int idMP, int idFVS, int idSemMP, int idSemEnt)
 {
+// Algorithme : la phase d'initialisation
+//
 	sprintf(buff,"\t[[Sortie]]\tInitialisation\n");
     ecrireLog(buff);
     
+    //Etablir les handlers
     struct sigaction handlerUSR2;
     handlerUSR2.sa_handler=finTache;
     sigemptyset(&handlerUSR2.sa_mask);
@@ -168,6 +200,7 @@ static void Initialisation(int idMP, int idFVS, int idSemMP, int idSemEnt)
     handlerCHLD.sa_flags=0;  
     sigaction(SIGCHLD, &handlerCHLD, NULL);
     
+    //Initialiser les variables
     idMemoirePartagee=idMP;
     idFileVoitureSortie=idFVS;
     idSemMemPartagee=idSemMP;
@@ -179,8 +212,12 @@ static void Initialisation(int idMP, int idFVS, int idSemMP, int idSemEnt)
 static void Moteur()
 {
 	msgInt numS = {0};
+	//Prendre le numero de la voiture sortie
     MY_SA_RESTART(msgrcv(idFileVoitureSortie, (void *) &numS, sizeof(msgInt),0,0));
+    //Creer la fille
 	pid_t pid = SortirVoiture(numS.numero);
+	//Si la fille est bien creee, ajouter le pid du processus dans le 
+	//tableau des filles pour preparer la destruction
 	if (pid > 0){
 		pidSortie.insert(std::pair<pid_t,int>(pid, numS.numero));
 	}

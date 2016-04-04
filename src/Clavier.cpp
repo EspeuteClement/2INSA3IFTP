@@ -23,7 +23,10 @@
 //------------------------------------------------------------------ Types
 
 //---------------------------------------------------- Variables statiques
+
+//les boites aux lettres pour les voitures qui entrent
 static int idfileVoitureEntree[NOMBRE_FILE_VOITURE];
+//la boite aux lettres pour le numero sorti
 static int idfileVoitureSortie;
 
 //------------------------------------------------------ Fonctions privées
@@ -43,7 +46,7 @@ static unsigned int numeroter()
 //////////////////////////////////////////////////////////////////  PUBLIC
 //---------------------------------------------------- Fonctions publiques
 void Clavier (int *filVoitureEntree, int filVoitureSortie)
-// Algorithme : On récupère les id des files d'attente des portes et
+// Algorithme : On récupère les id des files d'attente des entrees et
 //              appelle en boucle infinie Menu
 //
 {
@@ -66,10 +69,12 @@ void Commande (char code , unsigned int valeur)
     
     switch (code)
     {
+		//Quand on a 'E' comme code, le processus se termine.
         case 'E' :
             exit(0);
             break;
-            
+        //Quand on a 'A' comme code, on pose une voiture de type autre 
+        //dans la boite aux lettres de la porte choisie.
         case 'A' :
             uneVoiture.arrivee = 0;
             uneVoiture.type = AUTRE;
@@ -85,7 +90,8 @@ void Commande (char code , unsigned int valeur)
                 Afficher(MESSAGE,"Une voiture d'autre vient d'arriver à la porte GB");
             }
             break;
-            
+        //Quand on a 'P' comme code, on pose une voiture de type prof 
+        //dans la boite aux lettres de la porte choisie.
         case 'P' :
             uneVoiture.arrivee = 0;
             uneVoiture.type = PROF;
@@ -101,7 +107,9 @@ void Commande (char code , unsigned int valeur)
                 Afficher(MESSAGE,"Une voiture de prof vient d'arriver à la porte GB");
             }
             break;
-
+        //Quand on a 'S' comme code, on transmet la valeur au processus
+        //Sortie pour indiquer la sortie de la voiture d'une certaine
+        //place.
         case 'S' :
             msgInt numS = {valeur};
             msgsnd (idfileVoitureSortie, &numS, sizeof(msgInt), 0);
