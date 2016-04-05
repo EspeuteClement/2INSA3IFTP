@@ -33,7 +33,7 @@ SRC_FOLDER = src/
 # Le dossier où metre les fichiers objs
 OBJS_FOLDER = build/
 # Le dossier où metre l'exec
-EXEC_FOLDER = bin/
+EXEC_FOLDER = tp-multitache/
 
 ### CLEAN
 CLEAN = clean
@@ -97,7 +97,7 @@ $(CLEAN) :
 	$(PRINT) "$(BOLD)CLEAN$<\n\t$(RESET_BOLD)"
 	$(CLEAN_COMMAND) $(CLEAN_FLAG) $(ADDITIONAL_CLEAN)
 	$(PRINT) "\t"
-	$(CLEAN_COMMAND) -fd $(OBJS_FOLDER)
+	$(CLEAN_COMMAND) -fd $(OBJS_FOLDER) $(EXEC_FOLDER)
 
 ### CIBLES DE DEPENDANCES
 

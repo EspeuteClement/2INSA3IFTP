@@ -1,5 +1,6 @@
 bin/
 build/
+tp-multitache/
 cmake_install.cmake
 log.txt
 *.log
