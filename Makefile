@@ -6,15 +6,17 @@ LINK = g++
 # Argument pour changer le nom de la sortie du compilo
 CC_OUTPUT_FLAG = -o
 
-# Linker la librairie tcl en fonction de l'utilisateur
+# Linker la librairie tcl et celle de l'appli en fonction de l'utilisateur
 ifeq ($(LOGNAME),element)
 	LIB_TCL = -ltcl8.4
+	LIB_PARKING = lib
 else
 	LIB_TCL = -ltcl
+	LIB_PRAKING = -L/shares/public/tp/tp-mutitache
 endif
 
 # Arguments pour le stade d'édition des liens
-LINK_FLAG = -Llib -ltp -lncurses $(LIB_TCL) 
+LINK_FLAG = $(LIB_PRAKING) -ltp -lncurses $(LIB_TCL) 
 # Arguments pour le stade de compilation
 CC_COMP_FLAG = -c -std=c++11 -Wall -g -O3
 
