@@ -12,7 +12,7 @@ ifeq ($(LOGNAME),element)
 	LIB_PARKING = lib
 else
 	LIB_TCL = -ltcl
-	LIB_PRAKING = -L/shares/public/tp/tp-mutitache
+	LIB_PRAKING = -L/shares/public/tp/tp-multitache
 endif
 
 # Arguments pour le stade d'édition des liens
