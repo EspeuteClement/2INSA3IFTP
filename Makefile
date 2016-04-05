@@ -101,7 +101,7 @@ $(CLEAN) :
 
 ### CIBLES DE DEPENDANCES
 
-$(SRC_FOLDER)Mere.cpp : $(SRC_FOLDER)Config.h
+$(SRC_FOLDER)Mere.cpp : $(SRC_FOLDER)Mere.h
 
 $(SRC_FOLDER)Entree.cpp : $(SRC_FOLDER)Entree.h
 
