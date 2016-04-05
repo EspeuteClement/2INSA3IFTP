@@ -25,7 +25,7 @@ PRINT = @printf
 
 ### FICHIERS
 # Nom du fichier de sortie
-EXEC = bin/Parking
+EXEC = $(EXEC_FOLDER)Parking
 #Nom des fichers sources
 SRC = Mere.cpp Entree.cpp Clavier.cpp Sortie.cpp
 # Nom du dossier sources
