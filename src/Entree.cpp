@@ -19,6 +19,8 @@
 #include <sys/shm.h>
 #include <sys/ipc.h>
 #include <sys/msg.h>
+
+
 #include <sys/wait.h>
 
 #include <map>
@@ -28,8 +30,6 @@
 #include "Voiture.h"
 #include "libs/Outils.h"
 
-//#include "Config.h"
-//#include "Mere.h"
 //------------------------------------------------------------- Prototypes
 
 /** Execute la phase d'initialisation de la tâche
