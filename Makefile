@@ -9,14 +9,14 @@ CC_OUTPUT_FLAG = -o
 # Linker la librairie tcl et celle de l'appli en fonction de l'utilisateur
 ifeq ($(LOGNAME),element)
 	LIB_TCL = -ltcl8.4
-	LIB_PARKING = lib
+	LIB_PARKING = -Llib
 else
 	LIB_TCL = -ltcl
-	LIB_PRAKING = -L/shares/public/tp/tp-multitache
+	LIB_PARKING = -L/shares/public/tp/tp-multitache
 endif
 
 # Arguments pour le stade d'édition des liens
-LINK_FLAG = $(LIB_PRAKING) -ltp -lncurses $(LIB_TCL) 
+LINK_FLAG = $(LIB_PARKING) -ltp -lncurses $(LIB_TCL) 
 # Arguments pour le stade de compilation
 CC_COMP_FLAG = -c -std=c++11 -Wall -g -O3
 

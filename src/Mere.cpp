@@ -43,10 +43,9 @@ static const int DROITS_SEM = S_IRUSR | S_IWUSR;
 static const int DROITS_SHM = S_IRUSR | S_IWUSR;
 static const int DROITS_MSG = S_IRUSR | S_IWUSR;
 
-
 //------------------------------------------------------------- Globales
-static sembuf reserver = {0,-1,0};
-static sembuf liberer  = {0,1,0};
+
+
 
 //----------------------------------------------------- Méthodes Statiques
 
@@ -57,7 +56,9 @@ static void MereDestruction();
 //----------------------------------------------------- Variables Fichier
 
 static int msgFilesVoiture[NOMBRE_FILE_VOITURE];
+#ifdef DEBUG
 static int semLog;
+#endif
 static char buff[55];
 
 // ------- Ressources
@@ -278,6 +279,8 @@ static void MereDestruction()
 void ecrireLog(char const *message)
 {
 #ifdef DEBUG
+	sembuf reserver = {0,-1,0};
+	sembuf liberer  = {0,1,0};
 	MY_SA_RESTART(semop( semLog, &reserver, 0));
 	std::cerr << message;
 	semop( semLog, &liberer, 0);
