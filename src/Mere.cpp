@@ -32,6 +32,8 @@ using namespace std;
 #include "Clavier.h"
 #include "Voiture.h"
 #include "Sortie.h"
+
+//#define DEBUG
 //------------------------------------------------------------- Constantes
 //----------------------------------------------------------- Types privés
 
@@ -98,8 +100,10 @@ int main()
 static void MereInitialisation()
 {
 	// ------------------------------ Créer un mutex pour le fichier log
+#ifdef DEBUG
 	semLog = semget (IPC_PRIVATE, 1, IPC_CREAT | IPC_EXCL | DROITS_SEM);
 	semctl (semLog, 0, SETVAL, 1);
+#endif
 
 	sprintf(buff,"\t[[Mere]]\tInitialiserApplicatio()\n");
     ecrireLog(buff);
@@ -265,13 +269,17 @@ static void MereDestruction()
 	TerminerApplication(true);
 
 	// Liberer le sémaphore du ficher de log
+#ifdef DEBUG
 	semctl( semLog, 0,IPC_RMID, 0);
+#endif
 }
 
 
 void ecrireLog(char const *message)
 {
+#ifdef DEBUG
 	MY_SA_RESTART(semop( semLog, &reserver, 0));
 	std::cerr << message;
 	semop( semLog, &liberer, 0);
+#endif
 }
